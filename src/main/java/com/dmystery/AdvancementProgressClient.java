@@ -17,10 +17,10 @@ public class AdvancementProgressClient implements ClientModInitializer {
 
     public static final KeyMapping OPEN_SETTINGS_KEY = KeyBindingHelper.registerKeyBinding(
         new KeyMapping(
-            "key.advancements_refined.open_settings",
+            "key.modern_advancements.open_settings",
             InputConstants.Type.KEYSYM,
             InputConstants.UNKNOWN.getValue(),
-            "key.categories.advancements_refined"
+            "key.categories.modern_advancements"
         )
     );
 
@@ -36,6 +36,6 @@ public class AdvancementProgressClient implements ClientModInitializer {
             }
         });
 
-        LOGGER.info("[Advancements Refined] Client initialized with HUD Pinning and Settings support.");
+        LOGGER.info("[Modern Advancements] Client initialized with HUD Pinning and Settings support.");
     }
 }

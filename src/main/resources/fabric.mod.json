@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "advancements-refined",
+	"id": "modern-advancements",
 	"version": "${version}",
-	"name": "Advancements Refined",
+	"name": "Modern Advancements",
 	"description": "Client-side UI and quality-of-life overhaul for advancements: fullscreen tree with zoom, interactive criteria inspector, HUD tracking, and progress bars.",
 	"authors": [
 		"dmystery"
@@ -13,7 +13,7 @@
 	"issues": "https://github.com/dmystery908-jpg/Advancement-Refined-mod/issues"
 	},
 	"license": "MIT",
-	"icon": "assets/advancements-refined/icon.png",
+	"icon": "assets/modern-advancements/icon.png",
 	"environment": "client",
 	"entrypoints": {
 		"client": [
@@ -24,9 +24,9 @@
 		]
 	},
 	"mixins": [
-		"advancements-refined.mixins.json"
+		"modern-advancements.mixins.json"
 	],
-	"accessWidener": "advancements-refined.accesswidener",
+	"accessWidener": "modern-advancements.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.16.9",
 		"minecraft": ">=1.21.2 <=1.21.11",

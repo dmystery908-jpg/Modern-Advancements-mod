@@ -21,7 +21,8 @@ public class HudPinManager {
     public static final int MAX_PINNED = 3;
     private static final Map<String, List<ResourceLocation>> WORLD_PINS = new HashMap<>();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("advancements_refined_pins.json");
+    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("modern_advancements_pins.json");
+    private static final Path LEGACY_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("advancements_refined_pins.json");
     private static boolean loaded = false;
 
     public static String getCurrentWorldKey() {
@@ -124,8 +125,15 @@ public class HudPinManager {
     }
 
     private static void load() {
-        if (!Files.exists(CONFIG_PATH)) return;
-        try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
+        Path path = CONFIG_PATH;
+        if (!Files.exists(path)) {
+            if (Files.exists(LEGACY_CONFIG_PATH)) {
+                path = LEGACY_CONFIG_PATH;
+            } else {
+                return;
+            }
+        }
+        try (Reader reader = Files.newBufferedReader(path)) {
             com.google.gson.JsonElement root = com.google.gson.JsonParser.parseReader(reader);
             WORLD_PINS.clear();
             if (root != null && root.isJsonObject()) {

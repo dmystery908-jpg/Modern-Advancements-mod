@@ -153,8 +153,8 @@ public class PinnedAdvancementsHud implements HudRenderCallback {
                 }
             } else {
                 Component statusText = done
-                    ? Component.translatable("advancements_refined.hud.done")
-                    : Component.translatable("advancements_refined.hud.in_progress");
+                    ? Component.translatable("modern_advancements.hud.done")
+                    : Component.translatable("modern_advancements.hud.in_progress");
                 graphics.drawString(font, statusText, x + 21, textY, descColor, true);
                 textY += 9;
             }
