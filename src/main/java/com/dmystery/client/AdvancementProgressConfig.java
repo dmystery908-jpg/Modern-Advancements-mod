@@ -14,10 +14,10 @@ import java.nio.file.Path;
 
 public class AdvancementProgressConfig {
     public enum HudPosition {
-        TOP_RIGHT("advancements_refined.config.hud_position.top_right"),
-        TOP_LEFT("advancements_refined.config.hud_position.top_left"),
-        BOTTOM_RIGHT("advancements_refined.config.hud_position.bottom_right"),
-        BOTTOM_LEFT("advancements_refined.config.hud_position.bottom_left");
+        TOP_RIGHT("modern_advancements.config.hud_position.top_right"),
+        TOP_LEFT("modern_advancements.config.hud_position.top_left"),
+        BOTTOM_RIGHT("modern_advancements.config.hud_position.bottom_right"),
+        BOTTOM_LEFT("modern_advancements.config.hud_position.bottom_left");
 
         private final String key;
 
@@ -30,7 +30,8 @@ public class AdvancementProgressConfig {
         }
     }
 
-    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("advancements-refined.json");
+    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("modern-advancements.json");
+    private static final Path LEGACY_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("advancements-refined.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static AdvancementProgressConfig INSTANCE = null;
 
@@ -52,12 +53,17 @@ public class AdvancementProgressConfig {
     }
 
     public void load() {
-        if (!Files.exists(CONFIG_PATH)) {
-            save();
-            return;
+        Path path = CONFIG_PATH;
+        if (!Files.exists(path)) {
+            if (Files.exists(LEGACY_CONFIG_PATH)) {
+                path = LEGACY_CONFIG_PATH;
+            } else {
+                save();
+                return;
+            }
         }
 
-        try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
+        try (Reader reader = Files.newBufferedReader(path)) {
             AdvancementProgressConfig loaded = GSON.fromJson(reader, AdvancementProgressConfig.class);
             if (loaded != null) {
                 this.showGlobalBar = loaded.showGlobalBar;

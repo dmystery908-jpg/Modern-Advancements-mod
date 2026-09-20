@@ -373,7 +373,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                     );
                     if (net.minecraft.client.Minecraft.getInstance().player != null) {
                         net.minecraft.client.Minecraft.getInstance().player.sendOverlayMessage(
-                            Component.translatable("advancements_refined.feedback.cleared_all").withStyle(ChatFormatting.GOLD)
+                            Component.translatable("modern_advancements.feedback.cleared_all").withStyle(ChatFormatting.GOLD)
                         );
                     }
                     cir.setReturnValue(true);
@@ -392,7 +392,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                     );
                     if (net.minecraft.client.Minecraft.getInstance().player != null) {
                         net.minecraft.client.Minecraft.getInstance().player.sendOverlayMessage(
-                            Component.translatable("advancements_refined.feedback.unpinned", chip.title).withStyle(ChatFormatting.GOLD)
+                            Component.translatable("modern_advancements.feedback.unpinned", chip.title).withStyle(ChatFormatting.GOLD)
                         );
                     }
                     cir.setReturnValue(true);
@@ -410,7 +410,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                         );
                         if (net.minecraft.client.Minecraft.getInstance().player != null) {
                             net.minecraft.client.Minecraft.getInstance().player.sendOverlayMessage(
-                                Component.translatable("advancements_refined.feedback.unpinned", chip.title).withStyle(ChatFormatting.GOLD)
+                                Component.translatable("modern_advancements.feedback.unpinned", chip.title).withStyle(ChatFormatting.GOLD)
                             );
                         }
                         cir.setReturnValue(true);
@@ -450,7 +450,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                         );
                         if (net.minecraft.client.Minecraft.getInstance().player != null) {
                             net.minecraft.client.Minecraft.getInstance().player.sendOverlayMessage(
-                                Component.translatable("advancements_refined.feedback.unpinned", title).withStyle(ChatFormatting.GOLD)
+                                Component.translatable("modern_advancements.feedback.unpinned", title).withStyle(ChatFormatting.GOLD)
                             );
                         }
                     } else {
@@ -461,7 +461,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                             );
                             if (net.minecraft.client.Minecraft.getInstance().player != null) {
                                 net.minecraft.client.Minecraft.getInstance().player.sendOverlayMessage(
-                                    Component.translatable("advancements_refined.feedback.limit_reached", maxPinned, maxPinned).withStyle(ChatFormatting.RED)
+                                    Component.translatable("modern_advancements.feedback.limit_reached", maxPinned, maxPinned).withStyle(ChatFormatting.RED)
                                 );
                             }
                         } else {
@@ -471,7 +471,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                             );
                             if (net.minecraft.client.Minecraft.getInstance().player != null) {
                                 net.minecraft.client.Minecraft.getInstance().player.sendOverlayMessage(
-                                    Component.translatable("advancements_refined.feedback.pinned", title, HudPinManager.getPinnedCount(), maxPinned).withStyle(ChatFormatting.GREEN)
+                                    Component.translatable("modern_advancements.feedback.pinned", title, HudPinManager.getPinnedCount(), maxPinned).withStyle(ChatFormatting.GREEN)
                                 );
                             }
                         }
@@ -720,7 +720,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             // Tooltip on hover
             if (barHovered) {
                 Component tooltip = Component.translatable(
-                    "advancements_refined.tooltip",
+                    "modern_advancements.tooltip",
                     AdvancementCache.getTotalCompleted(),
                     AdvancementCache.getTotalCount()
                 );
@@ -765,9 +765,9 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
             // Tooltips
             if (closeHovered) {
-                graphics.setTooltipForNextFrame(Component.translatable("advancements_refined.pinned_bar.unpin_tooltip", chip.title), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(Component.translatable("modern_advancements.pinned_bar.unpin_tooltip", chip.title), mouseX, mouseY);
             } else if (chipHovered) {
-                graphics.setTooltipForNextFrame(Component.translatable("advancements_refined.pinned_bar.jump_tooltip"), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(Component.translatable("modern_advancements.pinned_bar.jump_tooltip"), mouseX, mouseY);
             }
 
             currX += chip.w + 4;
@@ -785,10 +785,10 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
             graphics.fill(advancementProgress$clearAllX, barY, advancementProgress$clearAllX + clearAllW, barY + barHeight, clearHovered ? 0xEEAA2222 : 0xCC2A3240);
             graphics.outline(advancementProgress$clearAllX, barY, clearAllW, barHeight, clearHovered ? 0xFFFF4444 : 0x55778899);
-            graphics.centeredText(this.font, Component.translatable("advancements_refined.pinned_bar.clear_all"), advancementProgress$clearAllX + clearAllW / 2, barY + 3, 0xFFFFFFFF);
+            graphics.centeredText(this.font, Component.translatable("modern_advancements.pinned_bar.clear_all"), advancementProgress$clearAllX + clearAllW / 2, barY + 3, 0xFFFFFFFF);
 
             if (clearHovered) {
-                graphics.setTooltipForNextFrame(Component.translatable("advancements_refined.pinned_bar.clear_all_tooltip"), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(Component.translatable("modern_advancements.pinned_bar.clear_all_tooltip"), mouseX, mouseY);
             }
         }
 
@@ -811,7 +811,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
         if (gearHovered) {
             graphics.setTooltipForNextFrame(
-                Component.translatable("advancements_refined.config.button_tooltip"),
+                Component.translatable("modern_advancements.config.button_tooltip"),
                 mouseX,
                 mouseY
             );
@@ -854,7 +854,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             // Tab hover tooltip enhancement (only if mouse is not over inspector)
             if (!advancementProgress$inspector.isMouseOver(mouseX, mouseY) && tab.isMouseOver(this.leftPos, this.topPos, mouseX, mouseY)) {
                 Component tabTip = Component.translatable(
-                    "advancements_refined.tab_tooltip",
+                    "modern_advancements.tab_tooltip",
                     tab.getTitle(),
                     stats.completed(),
                     stats.total(),
