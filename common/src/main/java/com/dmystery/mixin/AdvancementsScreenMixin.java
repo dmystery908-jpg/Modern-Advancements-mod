@@ -1,9 +1,9 @@
 package com.dmystery.mixin;
 
-import com.dmystery.AdvancementProgressClient;
+import com.dmystery.ModernAdvancementsClient;
 import com.dmystery.client.AdvancementCache;
 import com.dmystery.client.AdvancementDataLoader;
-import com.dmystery.client.AdvancementProgressConfigScreen;
+import com.dmystery.client.ModernAdvancementsConfigScreen;
 import com.dmystery.client.AdvancementScreenLayout;
 import com.dmystery.client.HudPinManager;
 import com.dmystery.client.InspectorPanel;
@@ -62,20 +62,20 @@ public abstract class AdvancementsScreenMixin extends Screen {
     private int topPos;
 
     @Unique
-    private final InspectorPanel advancementProgress$inspector = new InspectorPanel();
+    private final InspectorPanel modernAdvancements$inspector = new InspectorPanel();
 
     @Unique
-    private final List<PinnedChip> advancementProgress$activeChips = new ArrayList<>();
+    private final List<PinnedChip> modernAdvancements$activeChips = new ArrayList<>();
     @Unique
-    private int advancementProgress$clearAllX, advancementProgress$clearAllY, advancementProgress$clearAllW, advancementProgress$clearAllH;
+    private int modernAdvancements$clearAllX, modernAdvancements$clearAllY, modernAdvancements$clearAllW, modernAdvancements$clearAllH;
     @Unique
-    private boolean advancementProgress$hasClearAll = false;
+    private boolean modernAdvancements$hasClearAll = false;
     @Unique
-    private int advancementProgress$gearX, advancementProgress$gearY, advancementProgress$gearW = 18, advancementProgress$gearH = 14;
+    private int modernAdvancements$gearX, modernAdvancements$gearY, modernAdvancements$gearW = 18, modernAdvancements$gearH = 14;
 
     @Unique
     @Nullable
-    private AdvancementWidget advancementProgress$findWidgetAt(AdvancementTab tab, double mouseX, double mouseY) {
+    private AdvancementWidget modernAdvancements$findWidgetAt(AdvancementTab tab, double mouseX, double mouseY) {
         if (!(tab instanceof AdvancementTabAccessor tabAccessor)) {
             return null;
         }
@@ -89,9 +89,9 @@ public abstract class AdvancementsScreenMixin extends Screen {
         float scale = AdvancementScreenLayout.getZoom();
         int treeMouseX = (int) Math.round(insideX / scale);
         int treeMouseY = (int) Math.round(insideY / scale);
-        int sX = Mth.floor(tabAccessor.advancementProgress$getScrollX());
-        int sY = Mth.floor(tabAccessor.advancementProgress$getScrollY());
-        Map<AdvancementHolder, AdvancementWidget> widgets = tabAccessor.advancementProgress$getWidgets();
+        int sX = Mth.floor(tabAccessor.modernAdvancements$getScrollX());
+        int sY = Mth.floor(tabAccessor.modernAdvancements$getScrollY());
+        Map<AdvancementHolder, AdvancementWidget> widgets = tabAccessor.modernAdvancements$getWidgets();
         if (widgets != null) {
             for (AdvancementWidget widget : widgets.values()) {
                 if (widget.isMouseOver(sX, sY, treeMouseX, treeMouseY)) {
@@ -104,11 +104,11 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
     @Unique
     @Nullable
-    private AdvancementTab advancementProgress$findTabForAdvancement(AdvancementHolder holder) {
+    private AdvancementTab modernAdvancements$findTabForAdvancement(AdvancementHolder holder) {
         if (holder == null) return null;
         for (AdvancementTab tab : this.tabs.values()) {
             if (tab instanceof AdvancementTabAccessor tabAccessor) {
-                Map<AdvancementHolder, AdvancementWidget> widgets = tabAccessor.advancementProgress$getWidgets();
+                Map<AdvancementHolder, AdvancementWidget> widgets = tabAccessor.modernAdvancements$getWidgets();
                 if (widgets != null && widgets.containsKey(holder)) {
                     return tab;
                 }
@@ -143,7 +143,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        advancementProgress$inspector.close();
+        modernAdvancements$inspector.close();
         if (this.tabs.isEmpty()) {
             AdvancementCache.clear();
         } else {
@@ -169,10 +169,10 @@ public abstract class AdvancementsScreenMixin extends Screen {
         int winW = AdvancementScreenLayout.getWindowWidth();
         this.leftPos = Math.max(8, (this.width - winW) / 2);
         this.topPos = 48;
-        this.advancementProgress$gearW = 18;
-        this.advancementProgress$gearH = 14;
-        this.advancementProgress$gearX = this.leftPos + winW - this.advancementProgress$gearW;
-        this.advancementProgress$gearY = 4;
+        this.modernAdvancements$gearW = 18;
+        this.modernAdvancements$gearH = 14;
+        this.modernAdvancements$gearX = this.leftPos + winW - this.modernAdvancements$gearW;
+        this.modernAdvancements$gearY = 4;
         this.layout.arrangeElements();
         ci.cancel();
     }
@@ -182,7 +182,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
         int winW = AdvancementScreenLayout.getWindowWidth();
         int winH = AdvancementScreenLayout.getWindowHeight();
 
-        advancementProgress$renderWindowFrame(graphics, this.leftPos, this.topPos, winW, winH);
+        modernAdvancements$renderWindowFrame(graphics, this.leftPos, this.topPos, winW, winH);
 
         if (this.tabs.size() > 1) {
             for (AdvancementTab tab : this.tabs.values()) {
@@ -203,7 +203,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     }
 
     @Unique
-    private void advancementProgress$renderWindowFrame(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
+    private void modernAdvancements$renderWindowFrame(GuiGraphicsExtractor graphics, int x, int y, int w, int h) {
         // 9-slice rendering for the enlarged window frame
         // 1. Four corners
         graphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_LOCATION, x, y, 0.0F, 0.0F, 9, 18, 256, 256);
@@ -241,7 +241,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     }
 
     @Unique
-    private void advancementProgress$renderGearIcon(GuiGraphicsExtractor graphics, int x, int y, int color) {
+    private void modernAdvancements$renderGearIcon(GuiGraphicsExtractor graphics, int x, int y, int color) {
         // Crisp 11x11 mechanical gear icon with 8 distinct protruding teeth and central hole
         // Row 0: Top tooth (cols 4..6)
         graphics.fill(x + 4, y + 0, x + 7, y + 1, color);
@@ -290,8 +290,8 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Inject(method = "onUpdateAdvancementProgress", at = @At("RETURN"))
     private void onProgressUpdated(AdvancementNode node, AdvancementProgress progress, CallbackInfo ci) {
         AdvancementCache.markDirty();
-        advancementProgress$inspector.updateProgress(progress);
-        if (progress != null && progress.isDone() && com.dmystery.client.AdvancementProgressConfig.getInstance().autoUnpinOnComplete) {
+        modernAdvancements$inspector.updateProgress(progress);
+        if (progress != null && progress.isDone() && com.dmystery.client.ModernAdvancementsConfig.getInstance().autoUnpinOnComplete) {
             HudPinManager.unpin(node.holder().id());
         }
     }
@@ -333,7 +333,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Inject(method = "onAdvancementsCleared", at = @At("RETURN"))
     private void onCleared(CallbackInfo ci) {
         AdvancementCache.clear();
-        advancementProgress$inspector.close();
+        modernAdvancements$inspector.close();
     }
 
     @Inject(method = "onSelectedTabChanged", at = @At("RETURN"))
@@ -347,14 +347,14 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void onMouseClicked(MouseButtonEvent event, boolean flag, CallbackInfoReturnable<Boolean> cir) {
         // 0. Check click on settings gear button (20x20):
-        if (event.button() == 0 && advancementProgress$gearW > 0) {
-            if (event.x() >= advancementProgress$gearX && event.x() < advancementProgress$gearX + advancementProgress$gearW
-                && event.y() >= advancementProgress$gearY && event.y() < advancementProgress$gearY + advancementProgress$gearH) {
+        if (event.button() == 0 && modernAdvancements$gearW > 0) {
+            if (event.x() >= modernAdvancements$gearX && event.x() < modernAdvancements$gearX + modernAdvancements$gearW
+                && event.y() >= modernAdvancements$gearY && event.y() < modernAdvancements$gearY + modernAdvancements$gearH) {
                 net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
                     SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f)
                 );
                 net.minecraft.client.Minecraft.getInstance().setScreenAndShow(
-                    new AdvancementProgressConfigScreen(this)
+                    new ModernAdvancementsConfigScreen(this)
                 );
                 cir.setReturnValue(true);
                 return;
@@ -364,9 +364,9 @@ public abstract class AdvancementsScreenMixin extends Screen {
         // 1. Check clicks on top Pinned Chips Bar:
         if (event.y() >= 3 && event.y() <= 20) {
             // Check Clear All button
-            if (advancementProgress$hasClearAll && event.button() == 0) {
-                if (event.x() >= advancementProgress$clearAllX && event.x() <= advancementProgress$clearAllX + advancementProgress$clearAllW
-                    && event.y() >= advancementProgress$clearAllY && event.y() <= advancementProgress$clearAllY + advancementProgress$clearAllH) {
+            if (modernAdvancements$hasClearAll && event.button() == 0) {
+                if (event.x() >= modernAdvancements$clearAllX && event.x() <= modernAdvancements$clearAllX + modernAdvancements$clearAllW
+                    && event.y() >= modernAdvancements$clearAllY && event.y() <= modernAdvancements$clearAllY + modernAdvancements$clearAllH) {
                     HudPinManager.clearAll();
                     net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
                         SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 0.85f)
@@ -382,7 +382,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             }
 
             // Check individual chips
-            for (PinnedChip chip : advancementProgress$activeChips) {
+            for (PinnedChip chip : modernAdvancements$activeChips) {
                 // Clicked close button [X]
                 if (event.x() >= chip.closeX && event.x() <= chip.closeX + chip.closeW
                     && event.y() >= chip.closeY && event.y() <= chip.closeY + chip.closeH) {
@@ -417,7 +417,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                         return;
                     } else if (event.button() == 0) {
                         // Left-click on chip jumps to tab
-                        AdvancementTab tab = advancementProgress$findTabForAdvancement(chip.holder);
+                        AdvancementTab tab = modernAdvancements$findTabForAdvancement(chip.holder);
                         if (tab != null) {
                             this.selectedTab = tab;
                             this.advancements.setSelectedTab(tab.getRootNode().holder(), true);
@@ -434,13 +434,13 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
         // 2. Right-click (button 1) or Middle-click (button 2) on tree node toggles HUD Pin:
         if ((event.button() == 1 || event.button() == 2) && this.selectedTab != null) {
-            AdvancementWidget widget = advancementProgress$findWidgetAt(this.selectedTab, event.x(), event.y());
+            AdvancementWidget widget = modernAdvancements$findWidgetAt(this.selectedTab, event.x(), event.y());
             if (widget instanceof AdvancementWidgetAccessor widgetAccessor) {
-                AdvancementNode node = widgetAccessor.advancementProgress$getNode();
+                AdvancementNode node = widgetAccessor.modernAdvancements$getNode();
                 if (node != null) {
                     Identifier id = node.holder().id();
-                    Component title = widgetAccessor.advancementProgress$getDisplay() != null 
-                        ? widgetAccessor.advancementProgress$getDisplay().getTitle() 
+                    Component title = widgetAccessor.modernAdvancements$getDisplay() != null 
+                        ? widgetAccessor.modernAdvancements$getDisplay().getTitle() 
                         : Component.literal(id.getPath());
 
                     if (HudPinManager.isPinned(id)) {
@@ -483,25 +483,25 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
 
         // 3. If inspector is open:
-        if (advancementProgress$inspector.isVisible()) {
+        if (modernAdvancements$inspector.isVisible()) {
             // Clicked inside inspector panel
-            if (advancementProgress$inspector.isMouseOver(event.x(), event.y())) {
-                if (advancementProgress$inspector.mouseClicked(event.x(), event.y(), event.button())) {
+            if (modernAdvancements$inspector.isMouseOver(event.x(), event.y())) {
+                if (modernAdvancements$inspector.mouseClicked(event.x(), event.y(), event.button())) {
                     cir.setReturnValue(true);
                     return;
                 }
             } else if (event.button() == 0) {
                 // Clicked outside inspector panel:
-                AdvancementWidget clickedWidget = advancementProgress$findWidgetAt(this.selectedTab, event.x(), event.y());
+                AdvancementWidget clickedWidget = modernAdvancements$findWidgetAt(this.selectedTab, event.x(), event.y());
                 if (clickedWidget instanceof AdvancementWidgetAccessor widgetAccessor) {
-                    AdvancementNode node = widgetAccessor.advancementProgress$getNode();
+                    AdvancementNode node = widgetAccessor.modernAdvancements$getNode();
                     if (node != null && node.advancement().requirements().size() > 1) {
-                        if (!advancementProgress$inspector.isInspecting(node)) {
-                            advancementProgress$inspector.open(
+                        if (!modernAdvancements$inspector.isInspecting(node)) {
+                            modernAdvancements$inspector.open(
                                 node,
-                                widgetAccessor.advancementProgress$getProgress(),
-                                widgetAccessor.advancementProgress$getIcon(),
-                                widgetAccessor.advancementProgress$getDisplay()
+                                widgetAccessor.modernAdvancements$getProgress(),
+                                widgetAccessor.modernAdvancements$getIcon(),
+                                widgetAccessor.modernAdvancements$getDisplay()
                             );
                             cir.setReturnValue(true);
                             return;
@@ -510,22 +510,22 @@ public abstract class AdvancementsScreenMixin extends Screen {
                 }
 
                 // If not clicking another composite node, close inspector panel!
-                advancementProgress$inspector.close();
+                modernAdvancements$inspector.close();
                 cir.setReturnValue(true);
                 return;
             }
         } else {
             // Inspector was closed: open if left-clicked on composite advancement
             if (event.button() == 0 && this.selectedTab != null) {
-                AdvancementWidget clickedWidget = advancementProgress$findWidgetAt(this.selectedTab, event.x(), event.y());
+                AdvancementWidget clickedWidget = modernAdvancements$findWidgetAt(this.selectedTab, event.x(), event.y());
                 if (clickedWidget instanceof AdvancementWidgetAccessor widgetAccessor) {
-                    AdvancementNode node = widgetAccessor.advancementProgress$getNode();
+                    AdvancementNode node = widgetAccessor.modernAdvancements$getNode();
                     if (node != null && node.advancement().requirements().size() > 1) {
-                        advancementProgress$inspector.open(
+                        modernAdvancements$inspector.open(
                             node,
-                            widgetAccessor.advancementProgress$getProgress(),
-                            widgetAccessor.advancementProgress$getIcon(),
-                            widgetAccessor.advancementProgress$getDisplay()
+                            widgetAccessor.modernAdvancements$getProgress(),
+                            widgetAccessor.modernAdvancements$getIcon(),
+                            widgetAccessor.modernAdvancements$getDisplay()
                         );
                         cir.setReturnValue(true);
                         return;
@@ -540,7 +540,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                 if (tab.isMouseOver(this.leftPos, this.topPos, event.x(), event.y())) {
                     this.selectedTab = tab;
                     this.advancements.setSelectedTab(tab.getRootNode().holder(), true);
-                    advancementProgress$inspector.close();
+                    modernAdvancements$inspector.close();
                     net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
                         SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f)
                     );
@@ -558,16 +558,16 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void onKeyPressed(net.minecraft.client.input.KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
         // 256 is GLFW_KEY_ESCAPE
-        if (advancementProgress$inspector.isVisible() && event.key() == 256) {
-            advancementProgress$inspector.close();
+        if (modernAdvancements$inspector.isVisible() && event.key() == 256) {
+            modernAdvancements$inspector.close();
             cir.setReturnValue(true);
             return;
         }
 
-        if (!AdvancementProgressClient.OPEN_SETTINGS_KEY.isUnbound()
-            && AdvancementProgressClient.OPEN_SETTINGS_KEY.matches(event)) {
+        if (!ModernAdvancementsClient.OPEN_SETTINGS_KEY.isUnbound()
+            && ModernAdvancementsClient.OPEN_SETTINGS_KEY.matches(event)) {
             net.minecraft.client.Minecraft.getInstance().setScreenAndShow(
-                new AdvancementProgressConfigScreen(this)
+                new ModernAdvancementsConfigScreen(this)
             );
             cir.setReturnValue(true);
             return;
@@ -576,7 +576,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
     @Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
     private void onMouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
-        if (advancementProgress$inspector.isVisible() && advancementProgress$inspector.mouseScrolled(mouseX, mouseY, verticalAmount)) {
+        if (modernAdvancements$inspector.isVisible() && modernAdvancements$inspector.mouseScrolled(mouseX, mouseY, verticalAmount)) {
             cir.setReturnValue(true);
             return;
         }
@@ -584,16 +584,16 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
     @Inject(method = "extractTooltips", at = @At("HEAD"), cancellable = true)
     private void onExtractTooltipsHead(GuiGraphicsExtractor graphics, int mouseX, int mouseY, int leftPos, int topPos, CallbackInfo ci) {
-        if (advancementProgress$inspector.isMouseOver(mouseX, mouseY)) {
+        if (modernAdvancements$inspector.isMouseOver(mouseX, mouseY)) {
             ci.cancel();
             return;
         }
 
         if (this.selectedTab != null) {
-            if (advancementProgress$inspector.isVisible() && this.selectedTab instanceof com.dmystery.client.AdvancementTabExtension tabExt) {
-                AdvancementWidget hovered = tabExt.advancementProgress$getHovered();
+            if (modernAdvancements$inspector.isVisible() && this.selectedTab instanceof com.dmystery.client.AdvancementTabExtension tabExt) {
+                AdvancementWidget hovered = tabExt.modernAdvancements$getHovered();
                 if (hovered instanceof AdvancementWidgetAccessor widgetAccessor) {
-                    if (advancementProgress$inspector.isInspecting(widgetAccessor.advancementProgress$getNode())) {
+                    if (modernAdvancements$inspector.isInspecting(widgetAccessor.modernAdvancements$getNode())) {
                         ci.cancel();
                         return;
                     }
@@ -643,8 +643,8 @@ public abstract class AdvancementsScreenMixin extends Screen {
         int barY = 4;
 
         // 1.1 Calculate Pinned Chips
-        advancementProgress$activeChips.clear();
-        advancementProgress$hasClearAll = false;
+        modernAdvancements$activeChips.clear();
+        modernAdvancements$hasClearAll = false;
         List<Identifier> pinnedIds = HudPinManager.getPinned();
         int totalPinnedW = 0;
 
@@ -665,26 +665,26 @@ public abstract class AdvancementsScreenMixin extends Screen {
             chip.w = 16 + textW + 12;
             chip.h = barHeight;
             totalPinnedW += chip.w + 4;
-            advancementProgress$activeChips.add(chip);
+            modernAdvancements$activeChips.add(chip);
         }
 
         int clearAllW = 24;
-        if (advancementProgress$activeChips.size() > 1) {
-            advancementProgress$hasClearAll = true;
+        if (modernAdvancements$activeChips.size() > 1) {
+            modernAdvancements$hasClearAll = true;
             totalPinnedW += clearAllW + 4;
         }
 
         int gearReserved = 22;
-        advancementProgress$gearW = 18;
-        advancementProgress$gearH = barHeight;
-        advancementProgress$gearX = this.leftPos + winW - advancementProgress$gearW;
-        advancementProgress$gearY = barY;
+        modernAdvancements$gearW = 18;
+        modernAdvancements$gearH = barHeight;
+        modernAdvancements$gearX = this.leftPos + winW - modernAdvancements$gearW;
+        modernAdvancements$gearY = barY;
 
         int availableBarW = winW - gearReserved;
 
         int barWidth;
         int pinnedStartX;
-        if (advancementProgress$activeChips.isEmpty()) {
+        if (modernAdvancements$activeChips.isEmpty()) {
             barWidth = availableBarW;
             pinnedStartX = this.leftPos + availableBarW;
         } else {
@@ -692,7 +692,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             pinnedStartX = this.leftPos + availableBarW - totalPinnedW;
         }
 
-        if (com.dmystery.client.AdvancementProgressConfig.getInstance().showGlobalBar) {
+        if (com.dmystery.client.ModernAdvancementsConfig.getInstance().showGlobalBar) {
             int barX = this.leftPos;
             boolean barHovered = mouseX >= barX && mouseX <= barX + barWidth && mouseY >= barY && mouseY <= barY + barHeight;
 
@@ -730,7 +730,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
         // 1.2 Render Pinned Chips
         int currX = pinnedStartX;
-        for (PinnedChip chip : advancementProgress$activeChips) {
+        for (PinnedChip chip : modernAdvancements$activeChips) {
             chip.x = currX;
             chip.y = barY;
             chip.closeX = chip.x + chip.w - 11;
@@ -774,18 +774,18 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
 
         // Render Clear All button if active
-        if (advancementProgress$hasClearAll) {
-            advancementProgress$clearAllX = currX;
-            advancementProgress$clearAllY = barY;
-            advancementProgress$clearAllW = clearAllW;
-            advancementProgress$clearAllH = barHeight;
+        if (modernAdvancements$hasClearAll) {
+            modernAdvancements$clearAllX = currX;
+            modernAdvancements$clearAllY = barY;
+            modernAdvancements$clearAllW = clearAllW;
+            modernAdvancements$clearAllH = barHeight;
 
-            boolean clearHovered = mouseX >= advancementProgress$clearAllX && mouseX <= advancementProgress$clearAllX + clearAllW
+            boolean clearHovered = mouseX >= modernAdvancements$clearAllX && mouseX <= modernAdvancements$clearAllX + clearAllW
                 && mouseY >= barY && mouseY <= barY + barHeight;
 
-            graphics.fill(advancementProgress$clearAllX, barY, advancementProgress$clearAllX + clearAllW, barY + barHeight, clearHovered ? 0xEEAA2222 : 0xCC2A3240);
-            graphics.outline(advancementProgress$clearAllX, barY, clearAllW, barHeight, clearHovered ? 0xFFFF4444 : 0x55778899);
-            graphics.centeredText(this.font, Component.translatable("modern_advancements.pinned_bar.clear_all"), advancementProgress$clearAllX + clearAllW / 2, barY + 3, 0xFFFFFFFF);
+            graphics.fill(modernAdvancements$clearAllX, barY, modernAdvancements$clearAllX + clearAllW, barY + barHeight, clearHovered ? 0xEEAA2222 : 0xCC2A3240);
+            graphics.outline(modernAdvancements$clearAllX, barY, clearAllW, barHeight, clearHovered ? 0xFFFF4444 : 0x55778899);
+            graphics.centeredText(this.font, Component.translatable("modern_advancements.pinned_bar.clear_all"), modernAdvancements$clearAllX + clearAllW / 2, barY + 3, 0xFFFFFFFF);
 
             if (clearHovered) {
                 graphics.setTooltipForNextFrame(Component.translatable("modern_advancements.pinned_bar.clear_all_tooltip"), mouseX, mouseY);
@@ -793,21 +793,21 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
 
         // --- 1.3 Render Settings Gear Button ---
-        boolean gearHovered = mouseX >= advancementProgress$gearX && mouseX < advancementProgress$gearX + advancementProgress$gearW
-            && mouseY >= advancementProgress$gearY && mouseY < advancementProgress$gearY + advancementProgress$gearH;
+        boolean gearHovered = mouseX >= modernAdvancements$gearX && mouseX < modernAdvancements$gearX + modernAdvancements$gearW
+            && mouseY >= modernAdvancements$gearY && mouseY < modernAdvancements$gearY + modernAdvancements$gearH;
 
         int gearBg = gearHovered ? 0xEE2A3240 : 0xDD1F2530;
         int gearBorder = gearHovered ? 0xFFFFAA00 : 0x55778899;
-        graphics.fill(advancementProgress$gearX, advancementProgress$gearY, advancementProgress$gearX + advancementProgress$gearW, advancementProgress$gearY + advancementProgress$gearH, gearBg);
-        graphics.outline(advancementProgress$gearX, advancementProgress$gearY, advancementProgress$gearW, advancementProgress$gearH, gearBorder);
+        graphics.fill(modernAdvancements$gearX, modernAdvancements$gearY, modernAdvancements$gearX + modernAdvancements$gearW, modernAdvancements$gearY + modernAdvancements$gearH, gearBg);
+        graphics.outline(modernAdvancements$gearX, modernAdvancements$gearY, modernAdvancements$gearW, modernAdvancements$gearH, gearBorder);
 
-        int iconX = advancementProgress$gearX + (advancementProgress$gearW - 11) / 2;
-        int iconY = advancementProgress$gearY + (advancementProgress$gearH - 11) / 2;
+        int iconX = modernAdvancements$gearX + (modernAdvancements$gearW - 11) / 2;
+        int iconY = modernAdvancements$gearY + (modernAdvancements$gearH - 11) / 2;
         // Drop shadow (1px offset)
-        advancementProgress$renderGearIcon(graphics, iconX + 1, iconY + 1, 0x60000000);
+        modernAdvancements$renderGearIcon(graphics, iconX + 1, iconY + 1, 0x60000000);
         // Main gear icon (gold on hover, metallic silver normally)
         int gearColor = gearHovered ? 0xFFFFAA00 : 0xFFD8E0E8;
-        advancementProgress$renderGearIcon(graphics, iconX, iconY, gearColor);
+        modernAdvancements$renderGearIcon(graphics, iconX, iconY, gearColor);
 
         if (gearHovered) {
             graphics.setTooltipForNextFrame(
@@ -827,7 +827,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             int tabW = type.getWidth();
             int tabH = type.getHeight();
 
-            if (com.dmystery.client.AdvancementProgressConfig.getInstance().showTabBadges) {
+            if (com.dmystery.client.ModernAdvancementsConfig.getInstance().showTabBadges) {
                 int indicatorColor = stats.percent() >= 1.0f ? 0xFFFFD700 : 0xFF2ECC71;
 
                 if (type == AdvancementTabType.ABOVE) {
@@ -852,7 +852,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             }
 
             // Tab hover tooltip enhancement (only if mouse is not over inspector)
-            if (!advancementProgress$inspector.isMouseOver(mouseX, mouseY) && tab.isMouseOver(this.leftPos, this.topPos, mouseX, mouseY)) {
+            if (!modernAdvancements$inspector.isMouseOver(mouseX, mouseY) && tab.isMouseOver(this.leftPos, this.topPos, mouseX, mouseY)) {
                 Component tabTip = Component.translatable(
                     "modern_advancements.tab_tooltip",
                     tab.getTitle(),
@@ -865,7 +865,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
 
         // --- 3. Selected Tab Title Progress in Window Header ---
-        if (this.selectedTab != null && com.dmystery.client.AdvancementProgressConfig.getInstance().showTabBadges) {
+        if (this.selectedTab != null && com.dmystery.client.ModernAdvancementsConfig.getInstance().showTabBadges) {
             AdvancementCache.TabStats selStats = AdvancementCache.getTabStats(this.selectedTab);
             int titleWidth = this.font.width(this.selectedTab.getTitle());
             String pctFormatted = String.format(java.util.Locale.ROOT, "%.0f%%", selStats.percent() * 100.0f);
@@ -879,7 +879,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
         int panelX = this.leftPos + winW - panelW - 12;
         int panelY = this.topPos + 22;
 
-        advancementProgress$inspector.setBounds(panelX, panelY, panelW, panelH);
-        advancementProgress$inspector.render(graphics, this.font, mouseX, mouseY);
+        modernAdvancements$inspector.setBounds(panelX, panelY, panelW, panelH);
+        modernAdvancements$inspector.render(graphics, this.font, mouseX, mouseY);
     }
 }

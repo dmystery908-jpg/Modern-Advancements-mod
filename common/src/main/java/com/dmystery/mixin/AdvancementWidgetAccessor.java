@@ -10,14 +10,14 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(AdvancementWidget.class)
 public interface AdvancementWidgetAccessor {
     @Accessor("progress")
-    AdvancementProgress advancementProgress$getProgress();
+    AdvancementProgress modernAdvancements$getProgress();
 
     @Accessor("advancementNode")
-    AdvancementNode advancementProgress$getNode();
+    AdvancementNode modernAdvancements$getNode();
 
     @Accessor("display")
-    DisplayInfo advancementProgress$getDisplay();
+    DisplayInfo modernAdvancements$getDisplay();
 
     @Accessor("icon")
-    net.minecraft.world.item.ItemStack advancementProgress$getIcon();
+    net.minecraft.world.item.ItemStack modernAdvancements$getIcon();
 }

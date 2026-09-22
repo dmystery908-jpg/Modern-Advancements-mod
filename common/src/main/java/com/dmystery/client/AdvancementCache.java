@@ -69,7 +69,7 @@ public class AdvancementCache {
                 continue;
             }
 
-            Map<AdvancementHolder, AdvancementWidget> widgets = tabAccessor.advancementProgress$getWidgets();
+            Map<AdvancementHolder, AdvancementWidget> widgets = tabAccessor.modernAdvancements$getWidgets();
             int tabCompleted = 0;
             int tabTotal = 0;
 
@@ -77,7 +77,7 @@ public class AdvancementCache {
                 for (AdvancementWidget widget : widgets.values()) {
                     tabTotal++;
                     if (widget instanceof AdvancementWidgetAccessor widgetAccessor) {
-                        AdvancementProgress progress = widgetAccessor.advancementProgress$getProgress();
+                        AdvancementProgress progress = widgetAccessor.modernAdvancements$getProgress();
                         if (progress != null && progress.isDone()) {
                             tabCompleted++;
                         }

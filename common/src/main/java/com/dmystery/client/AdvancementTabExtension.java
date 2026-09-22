@@ -5,5 +5,5 @@ import org.jetbrains.annotations.Nullable;
 
 public interface AdvancementTabExtension {
     @Nullable
-    AdvancementWidget advancementProgress$getHovered();
+    AdvancementWidget modernAdvancements$getHovered();
 }
