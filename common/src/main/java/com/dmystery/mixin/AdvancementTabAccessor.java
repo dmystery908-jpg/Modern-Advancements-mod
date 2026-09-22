@@ -1,6 +1,6 @@
 package com.dmystery.mixin;
 
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +11,7 @@ import java.util.Map;
 @Mixin(AdvancementTab.class)
 public interface AdvancementTabAccessor {
     @Accessor("widgets")
-    Map<AdvancementHolder, AdvancementWidget> modernAdvancements$getWidgets();
+    Map<Advancement, AdvancementWidget> modernAdvancements$getWidgets();
 
     @Accessor("scrollX")
     double modernAdvancements$getScrollX();

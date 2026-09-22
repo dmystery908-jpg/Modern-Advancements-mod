@@ -1,7 +1,6 @@
 package com.dmystery.client;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementNode;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.Font;
@@ -18,7 +17,7 @@ public class InspectorPanel {
     public record CriterionItem(String id, boolean done, ItemStack icon, Component name) {}
 
     private DisplayInfo display;
-    private AdvancementNode node;
+    private Advancement advancement;
     private AdvancementProgress progress;
     private ItemStack advancementIcon = ItemStack.EMPTY;
     private Component advancementTitle = Component.empty();
@@ -37,9 +36,9 @@ public class InspectorPanel {
     private final List<CriterionItem> allEntries = new ArrayList<>();
     private final List<CriterionItem> visibleEntries = new ArrayList<>();
 
-    public void open(AdvancementNode node, AdvancementProgress progress, ItemStack icon, DisplayInfo display) {
+    public void open(Advancement advancement, AdvancementProgress progress, ItemStack icon, DisplayInfo display) {
         this.display = display;
-        this.node = node;
+        this.advancement = advancement;
         this.progress = progress;
         this.advancementIcon = icon != null ? icon : new ItemStack(Items.BOOK);
         this.advancementTitle = display != null ? display.getTitle() : Component.literal("Advancement");
@@ -51,7 +50,7 @@ public class InspectorPanel {
     public void close() {
         this.visible = false;
         this.display = null;
-        this.node = null;
+        this.advancement = null;
         this.progress = null;
         this.allEntries.clear();
         this.visibleEntries.clear();
@@ -61,20 +60,20 @@ public class InspectorPanel {
         return visible;
     }
 
-    public boolean isInspecting(AdvancementNode checkNode) {
-        return visible && node != null && node.equals(checkNode);
+    public boolean isInspecting(Advancement checkAdvancement) {
+        return visible && advancement != null && advancement.equals(checkAdvancement);
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
         return visible && mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }
 
-    public AdvancementNode getNode() {
-        return node;
+    public Advancement getAdvancement() {
+        return advancement;
     }
 
     public void updateProgress(AdvancementProgress newProgress) {
-        if (!visible || node == null) return;
+        if (!visible || advancement == null) return;
         this.progress = newProgress;
         rebuildEntries();
     }
@@ -97,27 +96,34 @@ public class InspectorPanel {
         completedCount = 0;
         totalCount = 0;
 
-        if (node == null) return;
+        if (advancement == null) return;
 
-        Advancement adv = node.advancement();
-        int reqSize = adv.requirements().size();
+        String[][] requirements = advancement.getRequirements();
+        int reqSize = requirements.length;
         this.totalCount = reqSize;
 
         if (progress != null && progress.isDone()) {
             this.completedCount = reqSize;
         } else if (progress != null) {
-            this.completedCount = Math.min(reqSize, adv.requirements().count(critName -> {
-                net.minecraft.advancements.CriterionProgress cp = progress.getCriterion(critName);
-                return cp != null && cp.isDone();
-            }));
+            int doneGroups = 0;
+            for (String[] group : requirements) {
+                for (String critName : group) {
+                    net.minecraft.advancements.CriterionProgress cp = progress.getCriterion(critName);
+                    if (cp != null && cp.isDone()) {
+                        doneGroups++;
+                        break;
+                    }
+                }
+            }
+            this.completedCount = Math.min(reqSize, doneGroups);
         } else {
             this.completedCount = 0;
         }
 
-        for (String critName : adv.requirements().names()) {
+        for (String critName : advancement.getCriteria().keySet()) {
             boolean done = progress != null && progress.getCriterion(critName) != null && progress.getCriterion(critName).isDone();
 
-            CriterionResolver.CriterionDisplay display = CriterionResolver.resolve(node.holder().id(), critName);
+            CriterionResolver.CriterionDisplay display = CriterionResolver.resolve(advancement.getId(), critName);
             CriterionItem item = new CriterionItem(critName, done, display.icon(), display.name());
             allEntries.add(item);
         }
@@ -185,7 +191,7 @@ public class InspectorPanel {
         // Pin button (★)
         int pinX = closeX - 14;
         int pinY = y + 5;
-        boolean isPinned = node != null && HudPinManager.isPinned(node.holder().id());
+        boolean isPinned = advancement != null && HudPinManager.isPinned(advancement.getId());
         boolean pinHovered = mouseX >= pinX && mouseX <= pinX + 12 && mouseY >= pinY && mouseY <= pinY + 10;
         int pinColor = isPinned ? 0xFF55FFFF : (pinHovered ? 0xFFFFFFFF : 0xFF888888);
         graphics.drawString(font, "★", pinX + 1, pinY + 1, pinColor, true);
@@ -314,8 +320,8 @@ public class InspectorPanel {
         int pinX = closeX - 14;
         int pinY = y + 5;
         if (mouseX >= pinX && mouseX <= pinX + 12 && mouseY >= pinY && mouseY <= pinY + 10) {
-            if (node != null) {
-                HudPinManager.togglePin(node.holder().id());
+            if (advancement != null) {
+                HudPinManager.togglePin(advancement.getId());
             }
             return true;
         }

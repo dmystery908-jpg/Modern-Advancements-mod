@@ -2,12 +2,11 @@ package com.dmystery.mixin;
 
 import com.dmystery.client.AdvancementScreenLayout;
 import com.dmystery.client.AdvancementTabExtension;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -34,7 +33,7 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
     @Shadow private boolean centered;
     @Shadow @Final private DisplayInfo display;
     @Shadow @Final private AdvancementWidget root;
-    @Shadow @Final private Map<AdvancementHolder, AdvancementWidget> widgets;
+    @Shadow @Final private Map<Advancement, AdvancementWidget> widgets;
 
     @Unique
     @Nullable
@@ -90,8 +89,9 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
         graphics.pose().pushPose();
         graphics.pose().translate((float) x, (float) y, 0.0f);
 
-        ResourceLocation bg = this.display.getBackground()
-                .orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
+        ResourceLocation bg = this.display.getBackground() != null
+                ? this.display.getBackground()
+                : TextureManager.INTENTIONAL_MISSING_TEXTURE;
 
         int sX = Mth.floor(this.scrollX);
         int sY = Mth.floor(this.scrollY);
@@ -103,7 +103,6 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
         for (int col = -1; col <= cols; col++) {
             for (int row = -1; row <= rows; row++) {
                 graphics.blit(
-                        RenderType::guiTextured,
                         bg,
                         tileOffsetX + col * 16,
                         tileOffsetY + row * 16,

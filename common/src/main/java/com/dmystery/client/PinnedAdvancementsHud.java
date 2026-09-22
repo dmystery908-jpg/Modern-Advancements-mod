@@ -2,10 +2,8 @@ package com.dmystery.client;
 
 import com.dmystery.mixin.ClientAdvancementsAccessor;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PinnedAdvancementsHud {
-    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+    public void render(GuiGraphics graphics, float tickDelta) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) {
             return;
@@ -54,7 +52,7 @@ public class PinnedAdvancementsHud {
             return;
         }
 
-        Map<AdvancementHolder, AdvancementProgress> progressMap =
+        Map<Advancement, AdvancementProgress> progressMap =
             ((ClientAdvancementsAccessor) clientAdvancements).modernAdvancements$getProgress();
 
         Font font = mc.font;
@@ -72,9 +70,9 @@ public class PinnedAdvancementsHud {
         if (isBottom) {
             int totalCardsHeight = 0;
             for (ResourceLocation id : pinnedList) {
-                AdvancementHolder h = clientAdvancements.get(id);
+                Advancement h = clientAdvancements.getAdvancements().get(id);
                 if (h == null) continue;
-                DisplayInfo d = h.value().display().orElse(null);
+                DisplayInfo d = h.getDisplay();
                 Component title = d != null ? d.getTitle() : Component.literal(id.getPath());
                 Component desc = d != null ? d.getDescription() : Component.empty();
                 AdvancementProgress prog = progressMap != null ? progressMap.get(h) : null;
@@ -83,7 +81,7 @@ public class PinnedAdvancementsHud {
 
                 int titleLines = Math.max(1, font.split(titleToRender, textAvailableW).size());
                 int descLines = !desc.getString().isEmpty() ? font.split(desc, textAvailableW).size() : 1;
-                boolean isComposite = h.value().requirements().size() > 1;
+                boolean isComposite = h.getRequirements().length > 1;
 
                 int contentH = (titleLines + descLines) * 9 + (isComposite ? 15 : 0);
                 int cardH = Math.max(24, 3 + contentH + 3);
@@ -93,16 +91,15 @@ public class PinnedAdvancementsHud {
         }
 
         for (ResourceLocation id : pinnedList) {
-            AdvancementHolder holder = clientAdvancements.get(id);
-            if (holder == null) {
+            Advancement adv = clientAdvancements.getAdvancements().get(id);
+            if (adv == null) {
                 continue;
             }
 
-            Advancement adv = holder.value();
-            DisplayInfo display = adv.display().orElse(null);
-            AdvancementProgress prog = progressMap != null ? progressMap.get(holder) : null;
+            DisplayInfo display = adv.getDisplay();
+            AdvancementProgress prog = progressMap != null ? progressMap.get(adv) : null;
 
-            int totalCriteria = adv.requirements().size();
+            int totalCriteria = adv.getRequirements().length;
             boolean isComposite = totalCriteria > 1;
             boolean done = prog != null && prog.isDone();
 
@@ -159,16 +156,20 @@ public class PinnedAdvancementsHud {
 
             // Progress text and micro-bar (for composite)
             if (isComposite) {
-                int doneCount;
+                int doneCount = 0;
                 if (prog != null && prog.isDone()) {
                     doneCount = totalCriteria;
                 } else if (prog != null) {
-                    doneCount = Math.min(totalCriteria, adv.requirements().count(crit -> {
-                        net.minecraft.advancements.CriterionProgress cp = prog.getCriterion(crit);
-                        return cp != null && cp.isDone();
-                    }));
-                } else {
-                    doneCount = 0;
+                    for (String[] group : adv.getRequirements()) {
+                        for (String crit : group) {
+                            net.minecraft.advancements.CriterionProgress cp = prog.getCriterion(crit);
+                            if (cp != null && cp.isDone()) {
+                                doneCount++;
+                                break;
+                            }
+                        }
+                    }
+                    doneCount = Math.min(totalCriteria, doneCount);
                 }
                 float pct = totalCriteria > 0 ? (float) doneCount / totalCriteria : 0.0f;
                 String pctStr = String.format(java.util.Locale.ROOT, "%.0f%%", pct * 100.0f);

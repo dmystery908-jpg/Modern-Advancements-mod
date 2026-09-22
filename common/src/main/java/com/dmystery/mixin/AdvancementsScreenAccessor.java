@@ -12,8 +12,4 @@ public interface AdvancementsScreenAccessor {
     @Accessor("selectedTab")
     @Nullable
     AdvancementTab modernAdvancements$getSelectedTab();
-
-    @Accessor("lastScreen")
-    @Nullable
-    Screen modernAdvancements$getLastScreen();
 }

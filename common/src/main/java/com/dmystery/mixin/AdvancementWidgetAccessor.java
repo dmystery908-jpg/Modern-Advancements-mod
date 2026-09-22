@@ -1,6 +1,6 @@
 package com.dmystery.mixin;
 
-import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
@@ -12,8 +12,8 @@ public interface AdvancementWidgetAccessor {
     @Accessor("progress")
     AdvancementProgress modernAdvancements$getProgress();
 
-    @Accessor("advancementNode")
-    AdvancementNode modernAdvancements$getNode();
+    @Accessor("advancement")
+    Advancement modernAdvancements$getAdvancement();
 
     @Accessor("display")
     DisplayInfo modernAdvancements$getDisplay();

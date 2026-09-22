@@ -1,6 +1,5 @@
 package com.dmystery.client;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -48,9 +47,9 @@ public class CriterionResolver {
 
             if (preferEntity) {
                 // Check EntityType first for entity-focused advancements (e.g. bred_all_animals, kill_all_mobs)
-                Optional<Holder.Reference<EntityType<?>>> entityHolder = BuiltInRegistries.ENTITY_TYPE.get(id);
+                Optional<EntityType<?>> entityHolder = BuiltInRegistries.ENTITY_TYPE.getOptional(id);
                 if (entityHolder.isPresent()) {
-                    EntityType<?> entityType = entityHolder.get().value();
+                    EntityType<?> entityType = entityHolder.get();
                     Component entityName = entityType.getDescription();
                     SpawnEggItem egg = SpawnEggItem.byId(entityType);
                     ItemStack icon = egg != null ? new ItemStack(egg) : new ItemStack(Items.ZOMBIE_HEAD);
@@ -59,17 +58,17 @@ public class CriterionResolver {
             }
 
             // 1. Check if it matches an Item
-            Optional<Holder.Reference<Item>> itemHolder = BuiltInRegistries.ITEM.get(id);
-            if (itemHolder.isPresent() && itemHolder.get().value() != Items.AIR) {
-                ItemStack stack = new ItemStack(itemHolder.get().value());
+            Optional<Item> itemHolder = BuiltInRegistries.ITEM.getOptional(id);
+            if (itemHolder.isPresent() && itemHolder.get() != Items.AIR) {
+                ItemStack stack = new ItemStack(itemHolder.get());
                 return new CriterionDisplay(stack, stack.getHoverName());
             }
 
             // 2. Check if it matches an EntityType (if not already checked)
             if (!preferEntity) {
-                Optional<Holder.Reference<EntityType<?>>> entityHolder = BuiltInRegistries.ENTITY_TYPE.get(id);
+                Optional<EntityType<?>> entityHolder = BuiltInRegistries.ENTITY_TYPE.getOptional(id);
                 if (entityHolder.isPresent()) {
-                    EntityType<?> entityType = entityHolder.get().value();
+                    EntityType<?> entityType = entityHolder.get();
                     Component entityName = entityType.getDescription();
                     SpawnEggItem egg = SpawnEggItem.byId(entityType);
                     ItemStack icon = egg != null ? new ItemStack(egg) : new ItemStack(Items.ZOMBIE_HEAD);

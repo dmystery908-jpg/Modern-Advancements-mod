@@ -1,7 +1,7 @@
 package com.dmystery.client;
 
 import com.dmystery.mixin.AdvancementsScreenAccessor;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
@@ -122,19 +122,17 @@ public class ModernAdvancementsConfigScreen extends Screen {
         if (this.minecraft != null) {
             if (this.parent instanceof AdvancementsScreen advScreen) {
                 if (this.minecraft.player != null && this.minecraft.player.connection != null) {
-                    AdvancementHolder currentTabHolder = null;
-                    Screen lastScreen = null;
+                    Advancement currentTabAdvancement = null;
                     if (advScreen instanceof AdvancementsScreenAccessor accessor) {
                         AdvancementTab tab = accessor.modernAdvancements$getSelectedTab();
                         if (tab != null) {
-                            currentTabHolder = tab.getRootNode().holder();
+                            currentTabAdvancement = tab.getAdvancement();
                         }
-                        lastScreen = accessor.modernAdvancements$getLastScreen();
                     }
                     ClientAdvancements adv = this.minecraft.player.connection.getAdvancements();
-                    AdvancementsScreen freshScreen = new AdvancementsScreen(adv, lastScreen);
-                    if (currentTabHolder != null) {
-                        adv.setSelectedTab(currentTabHolder, true);
+                    AdvancementsScreen freshScreen = new AdvancementsScreen(adv);
+                    if (currentTabAdvancement != null) {
+                        adv.setSelectedTab(currentTabAdvancement, true);
                     }
                     this.minecraft.setScreen(freshScreen);
                     return;

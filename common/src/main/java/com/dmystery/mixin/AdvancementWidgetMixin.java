@@ -2,7 +2,7 @@ package com.dmystery.mixin;
 
 import com.dmystery.client.HudPinManager;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.AdvancementNode;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,7 +28,7 @@ public abstract class AdvancementWidgetMixin {
     @Shadow @Final private Minecraft minecraft;
     @Shadow @Mutable @Final private List<FormattedCharSequence> description;
     @Shadow @Mutable @Final private int width;
-    @Shadow @Final private AdvancementNode advancementNode;
+    @Shadow @Final private Advancement advancement;
     @Shadow private int x;
     @Shadow private int y;
 
@@ -57,8 +57,8 @@ public abstract class AdvancementWidgetMixin {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(AdvancementTab tab, Minecraft minecraft, AdvancementNode node, DisplayInfo display, CallbackInfo ci) {
-        boolean isComposite = node != null && node.advancement().requirements().size() > 1;
+    private void onInit(AdvancementTab tab, Minecraft minecraft, Advancement advancement, DisplayInfo display, CallbackInfo ci) {
+        boolean isComposite = advancement != null && advancement.getRequirements().length > 1;
         if (com.dmystery.client.ModernAdvancementsConfig.getInstance().showTooltipHints) {
             int minHintWidth = isComposite ? 150 : 80;
             this.width = Math.max(this.width, minHintWidth);
@@ -80,7 +80,7 @@ public abstract class AdvancementWidgetMixin {
 
     @Inject(method = "draw", at = @At("RETURN"))
     private void renderPinBadge(GuiGraphics graphics, int scrollX, int scrollY, CallbackInfo ci) {
-        if (HudPinManager.isPinned(this.advancementNode.holder().id())) {
+        if (HudPinManager.isPinned(this.advancement.getId())) {
             // Elegant gold border around the frame
             graphics.renderOutline(scrollX + this.x + 2, scrollY + this.y - 1, 28, 28, 0xFFFFD700);
             // Bright gold star in the upper corner without ugly black box
@@ -109,8 +109,8 @@ public abstract class AdvancementWidgetMixin {
             return result;
         }
 
-        boolean isComposite = this.advancementNode != null && this.advancementNode.advancement().requirements().size() > 1;
-        boolean isPinned = this.advancementNode != null && HudPinManager.isPinned(this.advancementNode.holder().id());
+        boolean isComposite = this.advancement != null && this.advancement.getRequirements().length > 1;
+        boolean isPinned = this.advancement != null && HudPinManager.isPinned(this.advancement.getId());
         boolean isFull = !isPinned && HudPinManager.getPinnedCount() >= HudPinManager.getMaxPinned();
 
         net.minecraft.network.chat.MutableComponent hintComp = Component.empty();

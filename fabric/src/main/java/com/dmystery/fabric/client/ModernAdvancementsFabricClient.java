@@ -21,7 +21,7 @@ public final class ModernAdvancementsFabricClient implements ClientModInitialize
 
         KeyBindingHelper.registerKeyBinding(ModernAdvancementsClient.OPEN_SETTINGS_KEY);
 
-        HudRenderCallback.EVENT.register((graphics, deltaTracker) -> HUD.render(graphics, deltaTracker));
+        HudRenderCallback.EVENT.register((graphics, tickDelta) -> HUD.render(graphics, tickDelta));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (ModernAdvancementsClient.OPEN_SETTINGS_KEY.consumeClick()) {

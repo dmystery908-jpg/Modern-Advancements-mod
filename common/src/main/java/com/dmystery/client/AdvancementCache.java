@@ -2,7 +2,7 @@ package com.dmystery.client;
 
 import com.dmystery.mixin.AdvancementTabAccessor;
 import com.dmystery.mixin.AdvancementWidgetAccessor;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
@@ -39,7 +39,7 @@ public class AdvancementCache {
         tabStats = Collections.emptyMap();
     }
 
-    public static void updateIfDirty(Map<AdvancementHolder, AdvancementTab> tabs) {
+    public static void updateIfDirty(Map<Advancement, AdvancementTab> tabs) {
         if (!dirty) {
             return;
         }
@@ -51,7 +51,7 @@ public class AdvancementCache {
         recalculate(tabs);
     }
 
-    public static void recalculate(Map<AdvancementHolder, AdvancementTab> tabs) {
+    public static void recalculate(Map<Advancement, AdvancementTab> tabs) {
         dirty = false;
         int sumCompleted = 0;
         int sumTotal = 0;
@@ -69,7 +69,7 @@ public class AdvancementCache {
                 continue;
             }
 
-            Map<AdvancementHolder, AdvancementWidget> widgets = tabAccessor.modernAdvancements$getWidgets();
+            Map<Advancement, AdvancementWidget> widgets = tabAccessor.modernAdvancements$getWidgets();
             int tabCompleted = 0;
             int tabTotal = 0;
 
