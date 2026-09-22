@@ -3,7 +3,6 @@ package com.dmystery.client;
 import com.dmystery.ModernAdvancements;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dev.architectury.platform.Platform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -11,8 +10,19 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ModernAdvancementsConfig {
+    public static Path getConfigDirectory() {
+        try {
+            net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+            if (mc != null && mc.gameDirectory != null) {
+                return mc.gameDirectory.toPath().resolve("config");
+            }
+        } catch (Throwable ignored) {}
+        return Paths.get("config");
+    }
+
     public enum HudPosition {
         TOP_RIGHT("modern_advancements.config.hud_position.top_right"),
         TOP_LEFT("modern_advancements.config.hud_position.top_left"),
@@ -30,9 +40,9 @@ public class ModernAdvancementsConfig {
         }
     }
 
-    private static final Path CONFIG_PATH = Platform.getConfigFolder().resolve("modern_advancements.json");
-    private static final Path LEGACY_CONFIG_PATH = Platform.getConfigFolder().resolve("modern-advancements.json");
-    private static final Path SECOND_LEGACY_CONFIG_PATH = Platform.getConfigFolder().resolve("advancements-refined.json");
+    private static final Path CONFIG_PATH = getConfigDirectory().resolve("modern_advancements.json");
+    private static final Path LEGACY_CONFIG_PATH = getConfigDirectory().resolve("modern-advancements.json");
+    private static final Path SECOND_LEGACY_CONFIG_PATH = getConfigDirectory().resolve("advancements-refined.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static ModernAdvancementsConfig INSTANCE = null;
 
