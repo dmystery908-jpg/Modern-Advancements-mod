@@ -27,12 +27,5 @@ versionRange = "[1.21.2,1.21.12)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.modern_advancements]]
-modId = "architectury"
-type = "required"
-versionRange = "[15.0.3,)"
-ordering = "AFTER"
-side = "BOTH"
-
 [[mixins]]
 config = "modern_advancements.mixins.json"
