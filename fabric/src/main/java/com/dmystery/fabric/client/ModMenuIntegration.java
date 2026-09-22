@@ -1,11 +1,12 @@
-package com.dmystery.client;
+package com.dmystery.fabric.client;
 
+import com.dmystery.client.ModernAdvancementsConfigScreen;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return AdvancementProgressConfigScreen::new;
+        return ModernAdvancementsConfigScreen::new;
     }
 }

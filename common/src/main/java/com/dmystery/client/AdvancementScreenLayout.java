@@ -31,6 +31,6 @@ public class AdvancementScreenLayout {
     }
 
     public static float getZoom() {
-        return AdvancementProgressConfig.getInstance().treeZoom;
+        return ModernAdvancementsConfig.getInstance().treeZoom;
     }
 }

@@ -16,14 +16,14 @@ import net.minecraft.util.Mth;
 
 import java.util.Locale;
 
-public class AdvancementProgressConfigScreen extends Screen {
+public class ModernAdvancementsConfigScreen extends Screen {
     private final Screen parent;
-    private final AdvancementProgressConfig config;
+    private final ModernAdvancementsConfig config;
 
-    public AdvancementProgressConfigScreen(Screen parent) {
+    public ModernAdvancementsConfigScreen(Screen parent) {
         super(Component.translatable("modern_advancements.config.title"));
         this.parent = parent;
-        this.config = AdvancementProgressConfig.getInstance();
+        this.config = ModernAdvancementsConfig.getInstance();
     }
 
     @Override
@@ -64,8 +64,8 @@ public class AdvancementProgressConfigScreen extends Screen {
                 .create(leftX, startY + rowSpacing * 2, colW, 20, Component.translatable("modern_advancements.config.hud_enabled"), (btn, val) -> config.hudEnabled = val)
         );
         addRenderableWidget(
-            CycleButton.builder(AdvancementProgressConfig.HudPosition::getDisplayName)
-                .withValues(AdvancementProgressConfig.HudPosition.values())
+            CycleButton.builder(ModernAdvancementsConfig.HudPosition::getDisplayName)
+                .withValues(ModernAdvancementsConfig.HudPosition.values())
                 .withInitialValue(config.hudPosition)
                 .create(rightX, startY + rowSpacing * 2, colW, 20, Component.translatable("modern_advancements.config.hud_position"), (btn, val) -> config.hudPosition = val)
         );
@@ -125,11 +125,11 @@ public class AdvancementProgressConfigScreen extends Screen {
                     AdvancementHolder currentTabHolder = null;
                     Screen lastScreen = null;
                     if (advScreen instanceof AdvancementsScreenAccessor accessor) {
-                        AdvancementTab tab = accessor.advancementProgress$getSelectedTab();
+                        AdvancementTab tab = accessor.modernAdvancements$getSelectedTab();
                         if (tab != null) {
                             currentTabHolder = tab.getRootNode().holder();
                         }
-                        lastScreen = accessor.advancementProgress$getLastScreen();
+                        lastScreen = accessor.modernAdvancements$getLastScreen();
                     }
                     ClientAdvancements adv = this.minecraft.player.connection.getAdvancements();
                     AdvancementsScreen freshScreen = new AdvancementsScreen(adv, lastScreen);

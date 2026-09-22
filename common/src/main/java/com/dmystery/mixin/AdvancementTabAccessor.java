@@ -11,17 +11,17 @@ import java.util.Map;
 @Mixin(AdvancementTab.class)
 public interface AdvancementTabAccessor {
     @Accessor("widgets")
-    Map<AdvancementHolder, AdvancementWidget> advancementProgress$getWidgets();
+    Map<AdvancementHolder, AdvancementWidget> modernAdvancements$getWidgets();
 
     @Accessor("scrollX")
-    double advancementProgress$getScrollX();
+    double modernAdvancements$getScrollX();
 
     @Accessor("scrollX")
-    void advancementProgress$setScrollX(double x);
+    void modernAdvancements$setScrollX(double x);
 
     @Accessor("scrollY")
-    double advancementProgress$getScrollY();
+    double modernAdvancements$getScrollY();
 
     @Accessor("scrollY")
-    void advancementProgress$setScrollY(double y);
+    void modernAdvancements$setScrollY(double y);
 }

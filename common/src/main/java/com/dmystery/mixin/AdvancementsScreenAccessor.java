@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface AdvancementsScreenAccessor {
     @Accessor("selectedTab")
     @Nullable
-    AdvancementTab advancementProgress$getSelectedTab();
+    AdvancementTab modernAdvancements$getSelectedTab();
 
     @Accessor("lastScreen")
     @Nullable
-    Screen advancementProgress$getLastScreen();
+    Screen modernAdvancements$getLastScreen();
 }

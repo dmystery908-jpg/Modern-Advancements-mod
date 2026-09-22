@@ -1,7 +1,6 @@
 package com.dmystery.client;
 
 import com.dmystery.mixin.ClientAdvancementsAccessor;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
@@ -22,9 +21,8 @@ import net.minecraft.world.item.Items;
 import java.util.List;
 import java.util.Map;
 
-public class PinnedAdvancementsHud implements HudRenderCallback {
-    @Override
-    public void onHudRender(GuiGraphics graphics, DeltaTracker deltaTracker) {
+public class PinnedAdvancementsHud {
+    public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) {
             return;
@@ -36,7 +34,7 @@ public class PinnedAdvancementsHud implements HudRenderCallback {
             return;
         }
 
-        AdvancementProgressConfig config = AdvancementProgressConfig.getInstance();
+        ModernAdvancementsConfig config = ModernAdvancementsConfig.getInstance();
         if (!config.hudEnabled) {
             return;
         }
@@ -57,7 +55,7 @@ public class PinnedAdvancementsHud implements HudRenderCallback {
         }
 
         Map<AdvancementHolder, AdvancementProgress> progressMap =
-            ((ClientAdvancementsAccessor) clientAdvancements).advancementProgress$getProgress();
+            ((ClientAdvancementsAccessor) clientAdvancements).modernAdvancements$getProgress();
 
         Font font = mc.font;
         int screenWidth = mc.getWindow().getGuiScaledWidth();
@@ -65,8 +63,8 @@ public class PinnedAdvancementsHud implements HudRenderCallback {
         int cardWidth = 160;
         int textAvailableW = cardWidth - 25;
 
-        boolean isBottom = config.hudPosition == AdvancementProgressConfig.HudPosition.BOTTOM_LEFT || config.hudPosition == AdvancementProgressConfig.HudPosition.BOTTOM_RIGHT;
-        boolean isLeft = config.hudPosition == AdvancementProgressConfig.HudPosition.TOP_LEFT || config.hudPosition == AdvancementProgressConfig.HudPosition.BOTTOM_LEFT;
+        boolean isBottom = config.hudPosition == ModernAdvancementsConfig.HudPosition.BOTTOM_LEFT || config.hudPosition == ModernAdvancementsConfig.HudPosition.BOTTOM_RIGHT;
+        boolean isLeft = config.hudPosition == ModernAdvancementsConfig.HudPosition.TOP_LEFT || config.hudPosition == ModernAdvancementsConfig.HudPosition.BOTTOM_LEFT;
 
         int x = isLeft ? 4 : (screenWidth - cardWidth - 4);
         int y = 4;

@@ -1,29 +1,29 @@
 modLoader = "javafml"
-loaderVersion = "[4,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+loaderVersion = "[1,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/dmystery908-jpg/Modern-Advancements-mod/issues"
 
 [[mods]]
 modId = "modern_advancements"
 version = "${version}"
 displayName = "Modern Advancements"
-authors = "Me!"
+authors = "dmystery"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+Client-side UI and quality-of-life overhaul for advancements: fullscreen tree with zoom, interactive criteria inspector, HUD tracking, and progress bars.
 '''
-#logoFile = ""
+logoFile = "assets/modern_advancements/icon.png"
 
 [[dependencies.modern_advancements]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.4,)"
+versionRange = "[21.4.157,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.modern_advancements]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.4,)"
+versionRange = "[1.21.2,1.21.12)"
 ordering = "NONE"
 side = "BOTH"
 

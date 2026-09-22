@@ -11,5 +11,5 @@ import java.util.Map;
 @Mixin(ClientAdvancements.class)
 public interface ClientAdvancementsAccessor {
     @Accessor("progress")
-    Map<AdvancementHolder, AdvancementProgress> advancementProgress$getProgress();
+    Map<AdvancementHolder, AdvancementProgress> modernAdvancements$getProgress();
 }

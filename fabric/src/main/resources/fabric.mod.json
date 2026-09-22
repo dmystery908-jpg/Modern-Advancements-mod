@@ -3,36 +3,38 @@
   "id": "modern_advancements",
   "version": "${version}",
   "name": "Modern Advancements",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Client-side UI and quality-of-life overhaul for advancements: fullscreen tree with zoom, interactive criteria inspector, HUD tracking, and progress bars.",
   "authors": [
-    "Me!"
+    "dmystery"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/dmystery908-jpg/Modern-Advancements-mod",
+    "sources": "https://github.com/dmystery908-jpg/Modern-Advancements-mod",
+    "issues": "https://github.com/dmystery908-jpg/Modern-Advancements-mod/issues"
   },
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/modern_advancements/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
-      "com.dmystery.fabric.ExampleModFabric"
+      "com.dmystery.fabric.ModernAdvancementsFabric"
     ],
     "client": [
-      "com.dmystery.fabric.client.ExampleModFabricClient"
+      "com.dmystery.fabric.client.ModernAdvancementsFabricClient"
+    ],
+    "modmenu": [
+      "com.dmystery.fabric.client.ModMenuIntegration"
     ]
   },
   "mixins": [
     "modern_advancements.mixins.json"
   ],
+  "accessWidener": "modern_advancements.accesswidener",
   "depends": {
-    "fabricloader": ">=0.19.5",
-    "minecraft": "~1.21.4",
+    "fabricloader": ">=0.16.10",
+    "minecraft": ">=1.21.2 <=1.21.11",
     "java": ">=21",
     "architectury": ">=15.0.3",
     "fabric-api": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }

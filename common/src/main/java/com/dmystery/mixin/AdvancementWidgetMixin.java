@@ -59,7 +59,7 @@ public abstract class AdvancementWidgetMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(AdvancementTab tab, Minecraft minecraft, AdvancementNode node, DisplayInfo display, CallbackInfo ci) {
         boolean isComposite = node != null && node.advancement().requirements().size() > 1;
-        if (com.dmystery.client.AdvancementProgressConfig.getInstance().showTooltipHints) {
+        if (com.dmystery.client.ModernAdvancementsConfig.getInstance().showTooltipHints) {
             int minHintWidth = isComposite ? 150 : 80;
             this.width = Math.max(this.width, minHintWidth);
         }
@@ -98,14 +98,14 @@ public abstract class AdvancementWidgetMixin {
         )
     )
     private List<FormattedCharSequence> redirectDescriptionInHover(AdvancementWidget widget) {
-        return advancementProgress$getHoverDescription();
+        return modernAdvancements$getHoverDescription();
     }
 
     @org.spongepowered.asm.mixin.Unique
-    private List<FormattedCharSequence> advancementProgress$getHoverDescription() {
+    private List<FormattedCharSequence> modernAdvancements$getHoverDescription() {
         List<FormattedCharSequence> result = new ArrayList<>(this.description);
 
-        if (!com.dmystery.client.AdvancementProgressConfig.getInstance().showTooltipHints) {
+        if (!com.dmystery.client.ModernAdvancementsConfig.getInstance().showTooltipHints) {
             return result;
         }
 

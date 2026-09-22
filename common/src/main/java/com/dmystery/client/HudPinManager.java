@@ -1,10 +1,10 @@
 package com.dmystery.client;
 
-import com.dmystery.AdvancementProgress;
+import com.dmystery.ModernAdvancements;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import net.fabricmc.loader.api.FabricLoader;
+import dev.architectury.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.Reader;
@@ -21,8 +21,8 @@ public class HudPinManager {
     public static final int MAX_PINNED = 3;
     private static final Map<String, List<ResourceLocation>> WORLD_PINS = new HashMap<>();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("modern_advancements_pins.json");
-    private static final Path LEGACY_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("advancements_refined_pins.json");
+    private static final Path CONFIG_PATH = Platform.getConfigFolder().resolve("modern_advancements_pins.json");
+    private static final Path LEGACY_CONFIG_PATH = Platform.getConfigFolder().resolve("advancements_refined_pins.json");
     private static boolean loaded = false;
 
     public static String getCurrentWorldKey() {
@@ -71,7 +71,7 @@ public class HudPinManager {
     }
 
     public static int getMaxPinned() {
-        return AdvancementProgressConfig.getInstance().maxPins;
+        return ModernAdvancementsConfig.getInstance().maxPins;
     }
 
     public static synchronized boolean pin(ResourceLocation id) {
@@ -155,7 +155,7 @@ public class HudPinManager {
                 }
             }
         } catch (Exception e) {
-            AdvancementProgress.LOGGER.error("Failed to load pinned advancements config", e);
+            ModernAdvancements.LOGGER.error("Failed to load pinned advancements config", e);
         }
     }
 
@@ -174,7 +174,7 @@ public class HudPinManager {
                 GSON.toJson(saveMap, writer);
             }
         } catch (Exception e) {
-            AdvancementProgress.LOGGER.error("Failed to save pinned advancements config", e);
+            ModernAdvancements.LOGGER.error("Failed to save pinned advancements config", e);
         }
     }
 }

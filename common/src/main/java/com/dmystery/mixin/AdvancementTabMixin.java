@@ -38,11 +38,11 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
 
     @Unique
     @Nullable
-    private AdvancementWidget advancementProgress$hovered;
+    private AdvancementWidget modernAdvancements$hovered;
 
     @Override
-    public AdvancementWidget advancementProgress$getHovered() {
-        return this.advancementProgress$hovered;
+    public AdvancementWidget modernAdvancements$getHovered() {
+        return this.modernAdvancements$hovered;
     }
 
     @Inject(method = "scroll", at = @At("HEAD"), cancellable = true)
@@ -150,7 +150,7 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
             for (AdvancementWidget widget : this.widgets.values()) {
                 if (widget.isMouseOver(sX, sY, treeMouseX, treeMouseY)) {
                     hoveredAny = true;
-                    this.advancementProgress$hovered = widget;
+                    this.modernAdvancements$hovered = widget;
                     int adjustedSX = (int) Math.round((sX + widget.getX()) * scale) - widget.getX();
                     int adjustedSY = (int) Math.round((sY + widget.getY()) * scale) - widget.getY();
                     widget.drawHover(graphics, adjustedSX, adjustedSY, this.fade, leftPos, topPos);
@@ -164,7 +164,7 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
         } else {
             this.fade = Mth.clamp(this.fade - 0.04F, 0.0F, 1.0F);
             if (this.fade <= 0.0F) {
-                this.advancementProgress$hovered = null;
+                this.modernAdvancements$hovered = null;
             }
         }
 

@@ -1,9 +1,9 @@
 package com.dmystery.client;
 
-import com.dmystery.AdvancementProgress;
+import com.dmystery.ModernAdvancements;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
+import dev.architectury.platform.Platform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -12,7 +12,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class AdvancementProgressConfig {
+public class ModernAdvancementsConfig {
     public enum HudPosition {
         TOP_RIGHT("modern_advancements.config.hud_position.top_right"),
         TOP_LEFT("modern_advancements.config.hud_position.top_left"),
@@ -30,10 +30,11 @@ public class AdvancementProgressConfig {
         }
     }
 
-    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("modern-advancements.json");
-    private static final Path LEGACY_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("advancements-refined.json");
+    private static final Path CONFIG_PATH = Platform.getConfigFolder().resolve("modern_advancements.json");
+    private static final Path LEGACY_CONFIG_PATH = Platform.getConfigFolder().resolve("modern-advancements.json");
+    private static final Path SECOND_LEGACY_CONFIG_PATH = Platform.getConfigFolder().resolve("advancements-refined.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static AdvancementProgressConfig INSTANCE = null;
+    private static ModernAdvancementsConfig INSTANCE = null;
 
     public boolean showGlobalBar = true;
     public boolean showTabBadges = true;
@@ -44,9 +45,9 @@ public class AdvancementProgressConfig {
     public int maxPins = 3;
     public boolean autoUnpinOnComplete = false;
 
-    public static synchronized AdvancementProgressConfig getInstance() {
+    public static synchronized ModernAdvancementsConfig getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new AdvancementProgressConfig();
+            INSTANCE = new ModernAdvancementsConfig();
             INSTANCE.load();
         }
         return INSTANCE;
@@ -57,6 +58,8 @@ public class AdvancementProgressConfig {
         if (!Files.exists(path)) {
             if (Files.exists(LEGACY_CONFIG_PATH)) {
                 path = LEGACY_CONFIG_PATH;
+            } else if (Files.exists(SECOND_LEGACY_CONFIG_PATH)) {
+                path = SECOND_LEGACY_CONFIG_PATH;
             } else {
                 save();
                 return;
@@ -64,7 +67,7 @@ public class AdvancementProgressConfig {
         }
 
         try (Reader reader = Files.newBufferedReader(path)) {
-            AdvancementProgressConfig loaded = GSON.fromJson(reader, AdvancementProgressConfig.class);
+            ModernAdvancementsConfig loaded = GSON.fromJson(reader, ModernAdvancementsConfig.class);
             if (loaded != null) {
                 this.showGlobalBar = loaded.showGlobalBar;
                 this.showTabBadges = loaded.showTabBadges;
@@ -76,7 +79,7 @@ public class AdvancementProgressConfig {
                 this.autoUnpinOnComplete = loaded.autoUnpinOnComplete;
             }
         } catch (Exception e) {
-            AdvancementProgress.LOGGER.error("Failed to load configuration from {}", CONFIG_PATH, e);
+            ModernAdvancements.LOGGER.error("Failed to load configuration from {}", CONFIG_PATH, e);
         }
     }
 
@@ -87,7 +90,7 @@ public class AdvancementProgressConfig {
                 GSON.toJson(this, writer);
             }
         } catch (Exception e) {
-            AdvancementProgress.LOGGER.error("Failed to save configuration to {}", CONFIG_PATH, e);
+            ModernAdvancements.LOGGER.error("Failed to save configuration to {}", CONFIG_PATH, e);
         }
     }
 
