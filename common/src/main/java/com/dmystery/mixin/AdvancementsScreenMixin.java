@@ -57,10 +57,8 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Shadow @Final private ClientAdvancements advancements;
     @Shadow @Final private Map<AdvancementHolder, AdvancementTab> tabs;
     @Shadow @Nullable private AdvancementTab selectedTab;
-    @Unique
-    private int leftPos;
-    @Unique
-    private int topPos;
+    @Shadow private int leftPos;
+    @Shadow private int topPos;
 
     @Unique
     private final InspectorPanel modernAdvancements$inspector = new InspectorPanel();
@@ -573,24 +571,43 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
 
         if (this.selectedTab != null) {
-            if (modernAdvancements$inspector.isVisible() && this.selectedTab instanceof com.dmystery.client.AdvancementTabExtension tabExt) {
-                AdvancementWidget hovered = tabExt.modernAdvancements$getHovered();
-                if (hovered instanceof AdvancementWidgetAccessor widgetAccessor) {
+            AdvancementWidget hovered = modernAdvancements$findWidgetAt(this.selectedTab, mouseX, mouseY);
+            if (this.selectedTab instanceof com.dmystery.client.AdvancementTabExtension tabExt) {
+                tabExt.modernAdvancements$setHovered(hovered);
+            }
+
+            if (hovered != null) {
+                if (modernAdvancements$inspector.isVisible() && hovered instanceof AdvancementWidgetAccessor widgetAccessor) {
                     if (modernAdvancements$inspector.isInspecting(widgetAccessor.modernAdvancements$getNode())) {
                         ci.cancel();
                         return;
                     }
                 }
-            }
 
-            graphics.pose().pushMatrix();
-            graphics.pose().translate((float) (this.leftPos + 9), (float) (this.topPos + 18));
-            this.selectedTab.extractTooltips(
-                graphics,
-                mouseX - this.leftPos - 9,
-                mouseY - this.topPos - 18
-            );
-            graphics.pose().popMatrix();
+                if (this.selectedTab instanceof AdvancementTabAccessor tabAccessor) {
+                    graphics.pose().pushMatrix();
+                    graphics.pose().translate((float) (this.leftPos + 9), (float) (this.topPos + 18));
+                    graphics.nextStratum();
+
+                    float scale = AdvancementScreenLayout.getZoom();
+                    int sX = Mth.floor(tabAccessor.modernAdvancements$getScrollX());
+                    int sY = Mth.floor(tabAccessor.modernAdvancements$getScrollY());
+                    int adjustedSX = (int) Math.round((sX + hovered.getX()) * scale) - hovered.getX();
+                    int adjustedSY = (int) Math.round((sY + hovered.getY()) * scale) - hovered.getY();
+
+                    hovered.extractHover(
+                        graphics,
+                        adjustedSX,
+                        adjustedSY,
+                        1.0f,
+                        this.leftPos + 9,
+                        this.topPos + 18,
+                        this.width
+                    );
+
+                    graphics.pose().popMatrix();
+                }
+            }
         }
         ci.cancel();
     }

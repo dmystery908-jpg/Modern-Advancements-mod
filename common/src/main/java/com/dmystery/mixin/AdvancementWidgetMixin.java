@@ -132,10 +132,8 @@ public abstract class AdvancementWidgetMixin {
             hintComp.append(Component.translatable("modern_advancements.hint.action_pin").withStyle(ChatFormatting.GRAY));
         }
 
-        int hintWidth = this.minecraft.font.width(hintComp);
-        this.width = Math.max(this.width, hintWidth + 10);
-
-        List<FormattedCharSequence> hintLines = this.minecraft.font.split(hintComp, this.width);
+        int wrapWidth = Math.max(this.width, this.minecraft.font.width(hintComp) + 10);
+        List<FormattedCharSequence> hintLines = this.minecraft.font.split(hintComp, wrapWidth);
 
         if (!result.isEmpty()) {
             result.add(FormattedCharSequence.EMPTY);

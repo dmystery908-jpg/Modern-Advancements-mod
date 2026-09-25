@@ -63,6 +63,14 @@ public class AdvancementDataLoader {
 
         if (!missing.isEmpty()) {
             clientAdvancements.tree().addAll(missing);
+            LOGGER.info("Modern Advancements: Added {} missing advancements to client tree (total: {})",
+                    missing.size(), clientAdvancements.tree().nodes().size());
+        }
+
+        try {
+            clientAdvancements.tree().repositionNodes();
+        } catch (Exception e) {
+            LOGGER.error("Modern Advancements: Failed to reposition advancement nodes", e);
         }
     }
 
@@ -98,16 +106,22 @@ public class AdvancementDataLoader {
                 List.of(minecraft.getVanillaPackResources().fullResources())
         )) {
             Map<Identifier, Advancement> rawAdvancements = new HashMap<>();
-            FileToIdConverter lister = FileToIdConverter.registry(Registries.ADVANCEMENT);
+            List<FileToIdConverter> listers = List.of(
+                    FileToIdConverter.registry(Registries.ADVANCEMENT),
+                    FileToIdConverter.json("advancements")
+            );
             DynamicOps<JsonElement> ops = registryAccess.createSerializationContext(JsonOps.INSTANCE);
-            for (Map.Entry<Identifier, Resource> entry : lister.listMatchingResources(resourceManager).entrySet()) {
-                Identifier fileId = entry.getKey();
-                Identifier advId = lister.fileToId(fileId);
-                try (BufferedReader reader = entry.getValue().openAsReader()) {
-                    JsonElement json = StrictJsonParser.parse(reader);
-                    Advancement.CODEC.parse(ops, json).result().ifPresent(adv -> rawAdvancements.put(advId, adv));
-                } catch (Exception e) {
-                    LOGGER.error("Couldn't parse advancement data file '{}' from '{}'", advId, fileId, e);
+            for (FileToIdConverter lister : listers) {
+                for (Map.Entry<Identifier, Resource> entry : lister.listMatchingResources(resourceManager).entrySet()) {
+                    Identifier fileId = entry.getKey();
+                    Identifier advId = lister.fileToId(fileId);
+                    if (rawAdvancements.containsKey(advId)) continue;
+                    try (BufferedReader reader = entry.getValue().openAsReader()) {
+                        JsonElement json = StrictJsonParser.parse(reader);
+                        Advancement.CODEC.parse(ops, json).result().ifPresent(adv -> rawAdvancements.put(advId, adv));
+                    } catch (Exception e) {
+                        LOGGER.error("Couldn't parse advancement data file '{}' from '{}'", advId, fileId, e);
+                    }
                 }
             }
 

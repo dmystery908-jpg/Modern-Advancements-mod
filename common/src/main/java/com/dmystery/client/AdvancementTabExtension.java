@@ -6,4 +6,6 @@ import org.jetbrains.annotations.Nullable;
 public interface AdvancementTabExtension {
     @Nullable
     AdvancementWidget modernAdvancements$getHovered();
+
+    void modernAdvancements$setHovered(@Nullable AdvancementWidget widget);
 }

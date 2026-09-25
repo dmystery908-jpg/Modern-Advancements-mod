@@ -48,6 +48,12 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
         return this.modernAdvancements$hovered;
     }
 
+    @Override
+    public void modernAdvancements$setHovered(@Nullable AdvancementWidget widget) {
+        this.modernAdvancements$hovered = widget;
+        this.hovered = widget;
+    }
+
     @Inject(method = "canScrollHorizontally", at = @At("HEAD"), cancellable = true)
     private void onCanScrollHorizontally(CallbackInfoReturnable<Boolean> cir) {
         float scale = AdvancementScreenLayout.getZoom();
@@ -150,58 +156,13 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(int mouseX, int mouseY, CallbackInfo ci) {
-        int inW = AdvancementScreenLayout.getInsideWidth();
-        int inH = AdvancementScreenLayout.getInsideHeight();
-        float scale = AdvancementScreenLayout.getZoom();
-
-        boolean hoveredAny = false;
-        int sX = Mth.floor(this.scrollX);
-        int sY = Mth.floor(this.scrollY);
-
-        if (mouseX > 0 && mouseX < inW && mouseY > 0 && mouseY < inH) {
-            int treeMouseX = (int) Math.round(mouseX / scale);
-            int treeMouseY = (int) Math.round(mouseY / scale);
-            for (AdvancementWidget widget : this.widgets.values()) {
-                if (widget.isMouseOver(sX, sY, treeMouseX, treeMouseY)) {
-                    hoveredAny = true;
-                    this.hovered = widget;
-                    this.modernAdvancements$hovered = widget;
-                    break;
-                }
-            }
-        }
-
-        if (hoveredAny) {
-            this.fade = Mth.clamp(this.fade + 0.02F, 0.0F, 0.3F);
-        } else {
-            this.fade = Mth.clamp(this.fade - 0.04F, 0.0F, 1.0F);
-            if (this.fade <= 0.0F) {
-                this.hovered = null;
-                this.modernAdvancements$hovered = null;
-            }
-        }
+        // Cancel vanilla tick to prevent 234x113 bounds and fade flickering
         ci.cancel();
     }
 
     @Inject(method = "extractTooltips", at = @At("HEAD"), cancellable = true)
     private void onExtractTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
-        int inW = AdvancementScreenLayout.getInsideWidth();
-        int inH = AdvancementScreenLayout.getInsideHeight();
-        float scale = AdvancementScreenLayout.getZoom();
-
-        if (this.fade > 0.0F) {
-            graphics.fill(0, 0, inW, inH, Mth.floor(this.fade * 255.0F) << 24);
-        }
-
-        AdvancementWidget widget = this.modernAdvancements$hovered != null ? this.modernAdvancements$hovered : this.hovered;
-        if (widget != null) {
-            int sX = Mth.floor(this.scrollX);
-            int sY = Mth.floor(this.scrollY);
-            int adjustedSX = (int) Math.round((sX + widget.getX()) * scale) - widget.getX();
-            int adjustedSY = (int) Math.round((sY + widget.getY()) * scale) - widget.getY();
-            widget.extractHover(graphics, adjustedSX, adjustedSY, this.fade, mouseX, mouseY, this.screen.width);
-        }
-
+        // Handled cleanly by AdvancementsScreenMixin to avoid flickering and coordinate mismatch
         ci.cancel();
     }
 }
