@@ -56,7 +56,7 @@ public class AdvancementDataLoader {
 
         List<AdvancementHolder> missing = new ArrayList<>();
         for (AdvancementHolder candidate : candidates) {
-            if (candidate.value().display().isPresent() && clientAdvancements.tree().get(candidate.id()) == null) {
+            if (clientAdvancements.tree().get(candidate.id()) == null) {
                 missing.add(candidate);
             }
         }

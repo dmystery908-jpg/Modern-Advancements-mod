@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementTabType;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientAdvancements;
@@ -329,7 +330,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void onMouseClicked(MouseButtonEvent event, boolean flag, CallbackInfoReturnable<Boolean> cir) {
         // 0. Check click on settings gear button (20x20):
-        if (event.button() == 0 && modernAdvancements$gearW > 0) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && modernAdvancements$gearW > 0) {
             if (event.x() >= modernAdvancements$gearX && event.x() < modernAdvancements$gearX + modernAdvancements$gearW
                 && event.y() >= modernAdvancements$gearY && event.y() < modernAdvancements$gearY + modernAdvancements$gearH) {
                 net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
@@ -346,7 +347,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
         // 1. Check clicks on top Pinned Chips Bar:
         if (event.y() >= 3 && event.y() <= 20) {
             // Check Clear All button
-            if (modernAdvancements$hasClearAll && event.button() == 0) {
+            if (modernAdvancements$hasClearAll && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
                 if (event.x() >= modernAdvancements$clearAllX && event.x() <= modernAdvancements$clearAllX + modernAdvancements$clearAllW
                     && event.y() >= modernAdvancements$clearAllY && event.y() <= modernAdvancements$clearAllY + modernAdvancements$clearAllH) {
                     HudPinManager.clearAll();
@@ -384,7 +385,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                 // Clicked chip body
                 if (event.x() >= chip.x && event.x() <= chip.x + chip.w
                     && event.y() >= chip.y && event.y() <= chip.y + chip.h) {
-                    if (event.button() == 1) {
+                    if (event.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
                         // Right-click on chip body unpins
                         HudPinManager.unpin(chip.id);
                         net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
@@ -397,7 +398,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                         }
                         cir.setReturnValue(true);
                         return;
-                    } else if (event.button() == 0) {
+                    } else if (event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
                         // Left-click on chip jumps to tab
                         AdvancementTab tab = modernAdvancements$findTabForAdvancement(chip.holder);
                         if (tab != null) {
@@ -414,8 +415,8 @@ public abstract class AdvancementsScreenMixin extends Screen {
             }
         }
 
-        // 2. Right-click (button 1) or Middle-click (button 2) on tree node toggles HUD Pin:
-        if ((event.button() == 1 || event.button() == 2) && this.selectedTab != null) {
+        // 2. Right-click or Middle-click on tree node toggles HUD Pin:
+        if ((event.button() == InputConstants.MOUSE_BUTTON_RIGHT || event.button() == InputConstants.MOUSE_BUTTON_MIDDLE) && this.selectedTab != null) {
             AdvancementWidget widget = modernAdvancements$findWidgetAt(this.selectedTab, event.x(), event.y());
             if (widget instanceof AdvancementWidgetAccessor widgetAccessor) {
                 AdvancementNode node = widgetAccessor.modernAdvancements$getNode();
@@ -472,7 +473,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                     cir.setReturnValue(true);
                     return;
                 }
-            } else if (event.button() == 0) {
+            } else if (event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
                 // Clicked outside inspector panel:
                 AdvancementWidget clickedWidget = modernAdvancements$findWidgetAt(this.selectedTab, event.x(), event.y());
                 if (clickedWidget instanceof AdvancementWidgetAccessor widgetAccessor) {
@@ -498,7 +499,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             }
         } else {
             // Inspector was closed: open if left-clicked on composite advancement
-            if (event.button() == 0 && this.selectedTab != null) {
+            if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && this.selectedTab != null) {
                 AdvancementWidget clickedWidget = modernAdvancements$findWidgetAt(this.selectedTab, event.x(), event.y());
                 if (clickedWidget instanceof AdvancementWidgetAccessor widgetAccessor) {
                     AdvancementNode node = widgetAccessor.modernAdvancements$getNode();
@@ -517,7 +518,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
 
         // 4. Tab selection hit-test with responsive leftPos and topPos
-        if (event.button() == 0) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             for (AdvancementTab tab : this.tabs.values()) {
                 if (tab.isMouseOver(this.leftPos, this.topPos, event.x(), event.y())) {
                     this.selectedTab = tab;
@@ -584,7 +585,6 @@ public abstract class AdvancementsScreenMixin extends Screen {
 
             graphics.pose().pushMatrix();
             graphics.pose().translate((float) (this.leftPos + 9), (float) (this.topPos + 18));
-            graphics.nextStratum();
             this.selectedTab.extractTooltips(
                 graphics,
                 mouseX - this.leftPos - 9,

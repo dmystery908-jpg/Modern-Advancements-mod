@@ -33,6 +33,7 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
     @Shadow private int maxY;
     @Shadow private float fade;
     @Shadow private boolean centered;
+    @Shadow private AdvancementWidget hovered;
     @Shadow @Final private Identifier background;
     @Shadow @Final private AdvancementWidget root;
     @Shadow @Final private Map<AdvancementHolder, AdvancementWidget> widgets;
@@ -147,15 +148,11 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
         ci.cancel();
     }
 
-    @Inject(method = "extractTooltips", at = @At("HEAD"), cancellable = true)
-    private void onExtractTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    private void onTick(int mouseX, int mouseY, CallbackInfo ci) {
         int inW = AdvancementScreenLayout.getInsideWidth();
         int inH = AdvancementScreenLayout.getInsideHeight();
         float scale = AdvancementScreenLayout.getZoom();
-
-        graphics.pose().pushMatrix();
-        graphics.pose().translate(0.0f, 0.0f);
-        graphics.fill(0, 0, inW, inH, Mth.floor(this.fade * 255.0F) << 24);
 
         boolean hoveredAny = false;
         int sX = Mth.floor(this.scrollX);
@@ -167,10 +164,8 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
             for (AdvancementWidget widget : this.widgets.values()) {
                 if (widget.isMouseOver(sX, sY, treeMouseX, treeMouseY)) {
                     hoveredAny = true;
+                    this.hovered = widget;
                     this.modernAdvancements$hovered = widget;
-                    int adjustedSX = (int) Math.round((sX + widget.getX()) * scale) - widget.getX();
-                    int adjustedSY = (int) Math.round((sY + widget.getY()) * scale) - widget.getY();
-                    widget.extractHover(graphics, adjustedSX, adjustedSY, this.fade, mouseX, mouseY, this.screen.width);
                     break;
                 }
             }
@@ -181,11 +176,32 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
         } else {
             this.fade = Mth.clamp(this.fade - 0.04F, 0.0F, 1.0F);
             if (this.fade <= 0.0F) {
+                this.hovered = null;
                 this.modernAdvancements$hovered = null;
             }
         }
+        ci.cancel();
+    }
 
-        graphics.pose().popMatrix();
+    @Inject(method = "extractTooltips", at = @At("HEAD"), cancellable = true)
+    private void onExtractTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
+        int inW = AdvancementScreenLayout.getInsideWidth();
+        int inH = AdvancementScreenLayout.getInsideHeight();
+        float scale = AdvancementScreenLayout.getZoom();
+
+        if (this.fade > 0.0F) {
+            graphics.fill(0, 0, inW, inH, Mth.floor(this.fade * 255.0F) << 24);
+        }
+
+        AdvancementWidget widget = this.modernAdvancements$hovered != null ? this.modernAdvancements$hovered : this.hovered;
+        if (widget != null) {
+            int sX = Mth.floor(this.scrollX);
+            int sY = Mth.floor(this.scrollY);
+            int adjustedSX = (int) Math.round((sX + widget.getX()) * scale) - widget.getX();
+            int adjustedSY = (int) Math.round((sY + widget.getY()) * scale) - widget.getY();
+            widget.extractHover(graphics, adjustedSX, adjustedSY, this.fade, mouseX, mouseY, this.screen.width);
+        }
+
         ci.cancel();
     }
 }
