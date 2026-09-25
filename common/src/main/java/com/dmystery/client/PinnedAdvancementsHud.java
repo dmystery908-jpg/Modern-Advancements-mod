@@ -29,7 +29,7 @@ public class PinnedAdvancementsHud {
         }
 
         // Only show during gameplay or chat
-        net.minecraft.client.gui.screens.Screen screen = mc.screen;
+        net.minecraft.client.gui.screens.Screen screen = mc.gui.screen();
         if (screen != null && !(screen instanceof ChatScreen)) {
             return;
         }
@@ -75,8 +75,8 @@ public class PinnedAdvancementsHud {
                 AdvancementHolder h = clientAdvancements.get(id);
                 if (h == null) continue;
                 DisplayInfo d = h.value().display().orElse(null);
-                Component title = d != null ? d.getTitle() : Component.literal(id.getPath());
-                Component desc = d != null ? d.getDescription() : Component.empty();
+                Component title = d != null ? d.title() : Component.literal(id.getPath());
+                Component desc = d != null ? d.description() : Component.empty();
                 AdvancementProgress prog = progressMap != null ? progressMap.get(h) : null;
                 boolean done = prog != null && prog.isDone();
                 Component titleToRender = done ? Component.literal("✔ ").append(title) : title;
@@ -111,8 +111,8 @@ public class PinnedAdvancementsHud {
                 continue;
             }
 
-            Component title = display != null ? display.getTitle() : Component.literal(id.getPath());
-            Component desc = display != null ? display.getDescription() : Component.empty();
+            Component title = display != null ? display.title() : Component.literal(id.getPath());
+            Component desc = display != null ? display.description() : Component.empty();
 
             Component titleToRender = done ? Component.literal("✔ ").append(title) : title;
             List<FormattedCharSequence> splitTitle = font.split(titleToRender, textAvailableW);
@@ -129,7 +129,7 @@ public class PinnedAdvancementsHud {
             graphics.outline(x, y, cardWidth, cardHeight, done ? 0x882ECC71 : 0x55FFAA00);
 
             // Icon: centered if short card, or placed near top if multi-line card
-            ItemStack icon = display != null ? display.getIcon().create() : new ItemStack(Items.BOOK);
+            ItemStack icon = display != null ? display.icon().create() : new ItemStack(Items.BOOK);
             int iconY = (cardHeight <= 28) ? y + (cardHeight - 16) / 2 : y + 4;
             graphics.item(icon, x + 3, iconY);
 

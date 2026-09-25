@@ -29,7 +29,7 @@ public final class ModernAdvancementsFabricClient implements ClientModInitialize
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (ModernAdvancementsClient.OPEN_SETTINGS_KEY.consumeClick()) {
                 if (client != null) {
-                    client.setScreenAndShow(new ModernAdvancementsConfigScreen(client.screen));
+                    client.setScreenAndShow(new ModernAdvancementsConfigScreen(client.gui.screen()));
                 }
             }
         });

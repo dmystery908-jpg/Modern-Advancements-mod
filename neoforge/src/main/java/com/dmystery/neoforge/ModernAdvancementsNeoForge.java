@@ -56,7 +56,7 @@ public final class ModernAdvancementsNeoForge {
         Minecraft client = Minecraft.getInstance();
         while (ModernAdvancementsClient.OPEN_SETTINGS_KEY.consumeClick()) {
             if (client != null) {
-                client.setScreenAndShow(new ModernAdvancementsConfigScreen(client.screen));
+                client.setScreenAndShow(new ModernAdvancementsConfigScreen(client.gui.screen()));
             }
         }
     }

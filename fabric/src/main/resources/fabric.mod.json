@@ -32,7 +32,7 @@
   "accessWidener": "modern_advancements.accesswidener",
   "depends": {
     "fabricloader": ">=0.19.5",
-    "minecraft": "~26.1.2",
+    "minecraft": "~26.3",
     "java": ">=25",
     "fabric-api": "*"
   }

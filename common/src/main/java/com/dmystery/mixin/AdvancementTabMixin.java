@@ -1,24 +1,23 @@
 package com.dmystery.mixin;
 
 import com.dmystery.client.AdvancementScreenLayout;
+import com.dmystery.client.AdvancementTabExtension;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.advancements.AdvancementTab;
 import net.minecraft.client.gui.screens.advancements.AdvancementWidget;
+import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.core.ClientAsset;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import com.dmystery.client.AdvancementTabExtension;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -34,9 +33,10 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
     @Shadow private int maxY;
     @Shadow private float fade;
     @Shadow private boolean centered;
-    @Shadow @Final private DisplayInfo display;
+    @Shadow @Final private Identifier background;
     @Shadow @Final private AdvancementWidget root;
     @Shadow @Final private Map<AdvancementHolder, AdvancementWidget> widgets;
+    @Shadow @Final private AdvancementsScreen screen;
 
     @Unique
     @Nullable
@@ -108,9 +108,7 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
         graphics.pose().pushMatrix();
         graphics.pose().translate((float) x, (float) y);
 
-        Identifier bg = this.display.getBackground()
-                .map(ClientAsset.ResourceTexture::texturePath)
-                .orElse(TextureManager.INTENTIONAL_MISSING_TEXTURE);
+        Identifier bg = this.background != null ? this.background : MissingTextureAtlasSprite.getLocation();
 
         int sX = Mth.floor(this.scrollX);
         int sY = Mth.floor(this.scrollY);
@@ -150,7 +148,7 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
     }
 
     @Inject(method = "extractTooltips", at = @At("HEAD"), cancellable = true)
-    private void onExtractTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY, int leftPos, int topPos, CallbackInfo ci) {
+    private void onExtractTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
         int inW = AdvancementScreenLayout.getInsideWidth();
         int inH = AdvancementScreenLayout.getInsideHeight();
         float scale = AdvancementScreenLayout.getZoom();
@@ -172,7 +170,7 @@ public abstract class AdvancementTabMixin implements AdvancementTabExtension {
                     this.modernAdvancements$hovered = widget;
                     int adjustedSX = (int) Math.round((sX + widget.getX()) * scale) - widget.getX();
                     int adjustedSY = (int) Math.round((sY + widget.getY()) * scale) - widget.getY();
-                    widget.extractHover(graphics, adjustedSX, adjustedSY, this.fade, leftPos, topPos);
+                    widget.extractHover(graphics, adjustedSX, adjustedSY, this.fade, mouseX, mouseY, this.screen.width);
                     break;
                 }
             }

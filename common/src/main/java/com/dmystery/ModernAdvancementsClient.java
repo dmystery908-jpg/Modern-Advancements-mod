@@ -10,7 +10,7 @@ public class ModernAdvancementsClient {
 
     public static final KeyMapping OPEN_SETTINGS_KEY = new KeyMapping(
         "key.modern_advancements.open_settings",
-        InputConstants.Type.KEYSYM,
+        InputConstants.Type.KEYBOARD,
         InputConstants.UNKNOWN.getValue(),
         KEY_CATEGORY
     );

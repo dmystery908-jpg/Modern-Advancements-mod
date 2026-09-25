@@ -125,7 +125,7 @@ public class ModernAdvancementsConfigScreen extends Screen {
                     if (advScreen instanceof AdvancementsScreenAccessor accessor) {
                         AdvancementTab tab = accessor.modernAdvancements$getSelectedTab();
                         if (tab != null) {
-                            currentTabHolder = tab.getRootNode().holder();
+                            currentTabHolder = tab.getRootAdvancement();
                         }
                         lastScreen = accessor.modernAdvancements$getLastScreen();
                     }

@@ -36,7 +36,7 @@ public abstract class AdvancementWidgetMixin {
         method = "extractRenderState",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"
+            target = "Lnet/minecraft/advancements/DisplayInfo;hidden()Z"
         )
     )
     private boolean redirectIsHiddenInRender(DisplayInfo display) {
@@ -48,7 +48,7 @@ public abstract class AdvancementWidgetMixin {
         method = "isMouseOver",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/advancements/DisplayInfo;isHidden()Z"
+            target = "Lnet/minecraft/advancements/DisplayInfo;hidden()Z"
         )
     )
     private boolean redirectIsHiddenInMouseOver(DisplayInfo display) {
@@ -57,14 +57,14 @@ public abstract class AdvancementWidgetMixin {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(AdvancementTab tab, Minecraft minecraft, AdvancementNode node, DisplayInfo display, CallbackInfo ci) {
+    private void onInit(Minecraft minecraft, AdvancementNode node, DisplayInfo display, CallbackInfo ci) {
         boolean isComposite = node != null && node.advancement().requirements().size() > 1;
         if (com.dmystery.client.ModernAdvancementsConfig.getInstance().showTooltipHints) {
             int minHintWidth = isComposite ? 150 : 80;
             this.width = Math.max(this.width, minHintWidth);
         }
 
-        if (display != null && display.isHidden()) {
+        if (display != null && display.hidden()) {
             Component hiddenLabel = Component.translatable("modern_advancements.hidden_advancement")
                 .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
             List<FormattedCharSequence> extraLines = this.minecraft.font.split(hiddenLabel, Math.max(160, this.width));

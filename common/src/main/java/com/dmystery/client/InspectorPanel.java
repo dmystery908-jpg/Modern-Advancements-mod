@@ -42,7 +42,7 @@ public class InspectorPanel {
         this.node = node;
         this.progress = progress;
         this.advancementIcon = icon != null ? icon : new ItemStack(Items.BOOK);
-        this.advancementTitle = display != null ? display.getTitle() : Component.literal("Advancement");
+        this.advancementTitle = display != null ? display.title() : Component.literal("Advancement");
         this.visible = true;
         this.scrollOffset = 0.0;
         rebuildEntries();
@@ -171,7 +171,7 @@ public class InspectorPanel {
         float pct = totalCount > 0 ? (float) completedCount / totalCount : 0.0f;
         String pctStr = String.format(java.util.Locale.ROOT, "%.0f%%", pct * 100.0f);
         Component progressLabel = Component.literal(completedCount + " / " + totalCount + " (" + pctStr + ")");
-        if (display != null && display.isHidden()) {
+        if (display != null && display.hidden()) {
             progressLabel = progressLabel.copy().append(Component.literal(" ")).append(Component.translatable("modern_advancements.hidden_advancement"));
         }
         graphics.text(font, progressLabel, textX, y + 16, 0xFFAAAAAA, true);

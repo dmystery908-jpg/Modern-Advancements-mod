@@ -151,7 +151,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             if (this.selectedTab == null) {
                 AdvancementTab firstTab = this.tabs.values().iterator().next();
                 this.selectedTab = firstTab;
-                this.advancements.setSelectedTab(firstTab.getRootNode().holder(), true);
+                this.advancements.setSelectedTab(firstTab.getRootAdvancement(), true);
             }
         }
     }
@@ -305,17 +305,17 @@ public abstract class AdvancementsScreenMixin extends Screen {
                 tab = this.tabs.values().iterator().next();
             }
             this.selectedTab = tab;
-            this.advancements.setSelectedTab(tab.getRootNode().holder(), true);
+            this.advancements.setSelectedTab(tab.getRootAdvancement(), true);
         }
     }
 
     @Inject(method = "onRemoveAdvancementRoot", at = @At("RETURN"))
     private void onRootRemoved(AdvancementNode root, CallbackInfo ci) {
         AdvancementCache.markDirty();
-        if (this.selectedTab != null && this.selectedTab.getRootNode().equals(root)) {
+        if (this.selectedTab != null && this.selectedTab.getRootAdvancement().equals(root.holder())) {
             this.selectedTab = this.tabs.isEmpty() ? null : this.tabs.values().iterator().next();
             if (this.selectedTab != null) {
-                this.advancements.setSelectedTab(this.selectedTab.getRootNode().holder(), true);
+                this.advancements.setSelectedTab(this.selectedTab.getRootAdvancement(), true);
             }
         }
     }
@@ -420,7 +420,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                         AdvancementTab tab = modernAdvancements$findTabForAdvancement(chip.holder);
                         if (tab != null) {
                             this.selectedTab = tab;
-                            this.advancements.setSelectedTab(tab.getRootNode().holder(), true);
+                            this.advancements.setSelectedTab(tab.getRootAdvancement(), true);
                             net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
                                 SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f)
                             );
@@ -440,7 +440,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
                 if (node != null) {
                     Identifier id = node.holder().id();
                     Component title = widgetAccessor.modernAdvancements$getDisplay() != null 
-                        ? widgetAccessor.modernAdvancements$getDisplay().getTitle() 
+                        ? widgetAccessor.modernAdvancements$getDisplay().title() 
                         : Component.literal(id.getPath());
 
                     if (HudPinManager.isPinned(id)) {
@@ -539,7 +539,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             for (AdvancementTab tab : this.tabs.values()) {
                 if (tab.isMouseOver(this.leftPos, this.topPos, event.x(), event.y())) {
                     this.selectedTab = tab;
-                    this.advancements.setSelectedTab(tab.getRootNode().holder(), true);
+                    this.advancements.setSelectedTab(tab.getRootAdvancement(), true);
                     modernAdvancements$inspector.close();
                     net.minecraft.client.Minecraft.getInstance().getSoundManager().play(
                         SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f)
@@ -583,7 +583,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     }
 
     @Inject(method = "extractTooltips", at = @At("HEAD"), cancellable = true)
-    private void onExtractTooltipsHead(GuiGraphicsExtractor graphics, int mouseX, int mouseY, int leftPos, int topPos, CallbackInfo ci) {
+    private void onExtractTooltipsHead(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
         if (modernAdvancements$inspector.isMouseOver(mouseX, mouseY)) {
             ci.cancel();
             return;
@@ -606,9 +606,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
             this.selectedTab.extractTooltips(
                 graphics,
                 mouseX - this.leftPos - 9,
-                mouseY - this.topPos - 18,
-                this.leftPos,
-                this.topPos
+                mouseY - this.topPos - 18
             );
             graphics.pose().popMatrix();
         }
@@ -651,8 +649,8 @@ public abstract class AdvancementsScreenMixin extends Screen {
         for (Identifier id : pinnedIds) {
             AdvancementHolder holder = this.advancements.get(id);
             DisplayInfo display = (holder != null && holder.value().display().isPresent()) ? holder.value().display().get() : null;
-            Component title = display != null ? display.getTitle() : Component.literal(id.getPath());
-            ItemStack icon = display != null ? display.getIcon().create() : new ItemStack(Items.BOOK);
+            Component title = display != null ? display.title() : Component.literal(id.getPath());
+            ItemStack icon = display != null ? display.icon().create() : new ItemStack(Items.BOOK);
             PinnedChip chip = new PinnedChip(id, holder, title, icon);
 
             String rawTitle = title.getString();
