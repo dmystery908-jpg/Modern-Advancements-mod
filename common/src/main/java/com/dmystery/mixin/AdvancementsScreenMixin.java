@@ -178,7 +178,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     }
 
     @Inject(method = "extractWindow", at = @At("HEAD"), cancellable = true)
-    private void onExtractWindow(GuiGraphicsExtractor graphics, int x, int y, int mouseX, int mouseY, CallbackInfo ci) {
+    private void onExtractWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
         int winW = AdvancementScreenLayout.getWindowWidth();
         int winH = AdvancementScreenLayout.getWindowHeight();
 
@@ -270,7 +270,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     }
 
     @Inject(method = "extractInside", at = @At("HEAD"), cancellable = true)
-    private void onExtractInside(GuiGraphicsExtractor graphics, int x, int y, CallbackInfo ci) {
+    private void onExtractInside(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         AdvancementTab tab = this.selectedTab;
         int inW = AdvancementScreenLayout.getInsideWidth();
         int inH = AdvancementScreenLayout.getInsideHeight();
