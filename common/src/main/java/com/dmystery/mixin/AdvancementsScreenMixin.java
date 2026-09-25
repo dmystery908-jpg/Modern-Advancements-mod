@@ -287,47 +287,29 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
     }
 
-    @Inject(method = "onUpdateAdvancementProgress", at = @At("RETURN"))
-    private void onProgressUpdated(AdvancementNode node, AdvancementProgress progress, CallbackInfo ci) {
-        AdvancementCache.markDirty();
-        modernAdvancements$inspector.updateProgress(progress);
-        if (progress != null && progress.isDone() && com.dmystery.client.ModernAdvancementsConfig.getInstance().autoUnpinOnComplete) {
-            HudPinManager.unpin(node.holder().id());
-        }
-    }
-
-    @Inject(method = "onAddAdvancementRoot", at = @At("RETURN"))
-    private void onRootAdded(AdvancementNode root, CallbackInfo ci) {
+    @Inject(method = "onAdvancementsUpdated", at = @At("RETURN"))
+    private void onAdvancementsUpdated(CallbackInfo ci) {
         AdvancementCache.markDirty();
         if (this.selectedTab == null && !this.tabs.isEmpty()) {
-            AdvancementTab tab = this.tabs.get(root.holder());
-            if (tab == null) {
-                tab = this.tabs.values().iterator().next();
-            }
-            this.selectedTab = tab;
-            this.advancements.setSelectedTab(tab.getRootAdvancement(), true);
+            this.selectedTab = this.tabs.values().iterator().next();
+            this.advancements.setSelectedTab(this.selectedTab.getRootAdvancement(), true);
         }
-    }
-
-    @Inject(method = "onRemoveAdvancementRoot", at = @At("RETURN"))
-    private void onRootRemoved(AdvancementNode root, CallbackInfo ci) {
-        AdvancementCache.markDirty();
-        if (this.selectedTab != null && this.selectedTab.getRootAdvancement().equals(root.holder())) {
-            this.selectedTab = this.tabs.isEmpty() ? null : this.tabs.values().iterator().next();
-            if (this.selectedTab != null) {
-                this.advancements.setSelectedTab(this.selectedTab.getRootAdvancement(), true);
+        if (modernAdvancements$inspector.isVisible() && modernAdvancements$inspector.getNode() != null) {
+            AdvancementNode node = modernAdvancements$inspector.getNode();
+            AdvancementProgress prog = this.advancements.progress().get(node.holder());
+            modernAdvancements$inspector.updateProgress(prog);
+        }
+        if (com.dmystery.client.ModernAdvancementsConfig.getInstance().autoUnpinOnComplete) {
+            for (Identifier id : HudPinManager.getPinned()) {
+                AdvancementHolder h = this.advancements.get(id);
+                if (h != null) {
+                    AdvancementProgress p = this.advancements.progress().get(h);
+                    if (p != null && p.isDone()) {
+                        HudPinManager.unpin(id);
+                    }
+                }
             }
         }
-    }
-
-    @Inject(method = "onAddAdvancementTask", at = @At("RETURN"))
-    private void onTaskAdded(AdvancementNode task, CallbackInfo ci) {
-        AdvancementCache.markDirty();
-    }
-
-    @Inject(method = "onRemoveAdvancementTask", at = @At("RETURN"))
-    private void onTaskRemoved(AdvancementNode task, CallbackInfo ci) {
-        AdvancementCache.markDirty();
     }
 
     @Inject(method = "onAdvancementsCleared", at = @At("RETURN"))
@@ -617,7 +599,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
         method = "extractRenderState",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementsScreen;extractTooltips(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIII)V"
+            target = "Lnet/minecraft/client/gui/screens/advancements/AdvancementsScreen;extractTooltips(Lnet/minecraft/client/gui/GuiGraphicsExtractor;II)V"
         )
     )
     private void onExtractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
