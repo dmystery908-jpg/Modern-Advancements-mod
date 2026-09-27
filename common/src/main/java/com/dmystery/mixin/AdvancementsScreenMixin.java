@@ -571,12 +571,12 @@ public abstract class AdvancementsScreenMixin extends Screen {
         }
     }
 
-    @Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-    private void onMouseScrolled(double mouseX, double mouseY, double delta, CallbackInfoReturnable<Boolean> cir) {
-        if (modernAdvancements$inspector.isVisible() && modernAdvancements$inspector.mouseScrolled(mouseX, mouseY, delta)) {
-            cir.setReturnValue(true);
-            return;
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (this.modernAdvancements$inspector != null && this.modernAdvancements$inspector.isVisible() && this.modernAdvancements$inspector.mouseScrolled(mouseX, mouseY, delta)) {
+            return true;
         }
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
     /**
