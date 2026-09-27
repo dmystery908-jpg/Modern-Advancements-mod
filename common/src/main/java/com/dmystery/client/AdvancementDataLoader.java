@@ -27,6 +27,25 @@ public class AdvancementDataLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static List<AdvancementHolder> cachedVanillaAdvancements = null;
 
+    private static final List<ResourceLocation> CANONICAL_ROOTS = List.of(
+            ResourceLocation.fromNamespaceAndPath("minecraft", "story/root"),
+            ResourceLocation.fromNamespaceAndPath("minecraft", "nether/root"),
+            ResourceLocation.fromNamespaceAndPath("minecraft", "end/root"),
+            ResourceLocation.fromNamespaceAndPath("minecraft", "adventure/root"),
+            ResourceLocation.fromNamespaceAndPath("minecraft", "husbandry/root")
+    );
+
+    private static int compareRoots(ResourceLocation a, ResourceLocation b) {
+        int idxA = CANONICAL_ROOTS.indexOf(a);
+        int idxB = CANONICAL_ROOTS.indexOf(b);
+        if (idxA != -1 && idxB != -1) {
+            return Integer.compare(idxA, idxB);
+        }
+        if (idxA != -1) return -1;
+        if (idxB != -1) return 1;
+        return a.compareTo(b);
+    }
+
     public static void ensureAdvancementsLoaded(ClientAdvancements clientAdvancements) {
         if (clientAdvancements == null) {
             return;
@@ -47,15 +66,26 @@ public class AdvancementDataLoader {
             return;
         }
 
-        List<AdvancementHolder> missing = new ArrayList<>();
+        List<AdvancementHolder> candidateRoots = new ArrayList<>();
+        List<AdvancementHolder> candidateTasks = new ArrayList<>();
         for (AdvancementHolder candidate : candidates) {
             if (candidate.value().display().isPresent() && clientAdvancements.getTree().get(candidate.id()) == null) {
-                missing.add(candidate);
+                if (candidate.value().isRoot()) {
+                    candidateRoots.add(candidate);
+                } else {
+                    candidateTasks.add(candidate);
+                }
             }
         }
 
-        if (!missing.isEmpty()) {
-            clientAdvancements.getTree().addAll(missing);
+        candidateRoots.sort((a, b) -> compareRoots(a.id(), b.id()));
+
+        List<AdvancementHolder> toAdd = new ArrayList<>(candidateRoots.size() + candidateTasks.size());
+        toAdd.addAll(candidateRoots);
+        toAdd.addAll(candidateTasks);
+
+        if (!toAdd.isEmpty()) {
+            clientAdvancements.getTree().addAll(toAdd);
         }
     }
 
