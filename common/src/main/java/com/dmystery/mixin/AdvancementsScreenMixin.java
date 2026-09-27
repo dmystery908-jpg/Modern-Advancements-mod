@@ -148,11 +148,24 @@ public abstract class AdvancementsScreenMixin extends Screen {
         } else {
             AdvancementCache.markDirty();
             if (this.selectedTab == null) {
-                AdvancementTab firstTab = this.tabs.values().iterator().next();
-                this.selectedTab = firstTab;
-                this.advancements.setSelectedTab(firstTab.getRootAdvancement(), true);
+                AdvancementTab defaultTab = modernAdvancements$getDefaultTab();
+                this.selectedTab = defaultTab;
+                if (defaultTab != null) {
+                    this.advancements.setSelectedTab(defaultTab.getRootAdvancement(), true);
+                }
             }
         }
+    }
+
+    @Unique
+    private AdvancementTab modernAdvancements$getDefaultTab() {
+        Identifier storyRoot = Identifier.fromNamespaceAndPath("minecraft", "story/root");
+        for (AdvancementTab tab : this.tabs.values()) {
+            if (tab.getRootAdvancement().id().equals(storyRoot)) {
+                return tab;
+            }
+        }
+        return this.tabs.isEmpty() ? null : this.tabs.values().iterator().next();
     }
 
     @Inject(method = "repositionElements", at = @At("HEAD"), cancellable = true)
@@ -290,8 +303,11 @@ public abstract class AdvancementsScreenMixin extends Screen {
     private void onAdvancementsUpdated(CallbackInfo ci) {
         AdvancementCache.markDirty();
         if (this.selectedTab == null && !this.tabs.isEmpty()) {
-            this.selectedTab = this.tabs.values().iterator().next();
-            this.advancements.setSelectedTab(this.selectedTab.getRootAdvancement(), true);
+            AdvancementTab defaultTab = modernAdvancements$getDefaultTab();
+            this.selectedTab = defaultTab;
+            if (defaultTab != null) {
+                this.advancements.setSelectedTab(defaultTab.getRootAdvancement(), true);
+            }
         }
         if (modernAdvancements$inspector.isVisible() && modernAdvancements$inspector.getNode() != null) {
             AdvancementNode node = modernAdvancements$inspector.getNode();
@@ -320,8 +336,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Inject(method = "onSelectedTabChanged", at = @At("RETURN"))
     private void onTabChanged(AdvancementHolder holder, CallbackInfo ci) {
         if (this.selectedTab == null && !this.tabs.isEmpty()) {
-            AdvancementTab firstTab = this.tabs.values().iterator().next();
-            this.selectedTab = firstTab;
+            this.selectedTab = modernAdvancements$getDefaultTab();
         }
     }
 
