@@ -153,11 +153,24 @@ public abstract class AdvancementsScreenMixin extends Screen {
         } else {
             AdvancementCache.markDirty();
             if (this.selectedTab == null) {
-                AdvancementTab firstTab = this.tabs.values().iterator().next();
-                this.selectedTab = firstTab;
-                this.advancements.setSelectedTab(firstTab.getAdvancement(), true);
+                AdvancementTab defaultTab = modernAdvancements$getDefaultTab();
+                this.selectedTab = defaultTab;
+                if (defaultTab != null) {
+                    this.advancements.setSelectedTab(defaultTab.getAdvancement(), true);
+                }
             }
         }
+    }
+
+    @Unique
+    private AdvancementTab modernAdvancements$getDefaultTab() {
+        ResourceLocation storyRoot = new ResourceLocation("minecraft", "story/root");
+        for (AdvancementTab tab : this.tabs.values()) {
+            if (tab.getAdvancement().getId().equals(storyRoot)) {
+                return tab;
+            }
+        }
+        return this.tabs.isEmpty() ? null : this.tabs.values().iterator().next();
     }
 
     @Inject(method = "renderWindow", at = @At("HEAD"), cancellable = true)
@@ -280,12 +293,11 @@ public abstract class AdvancementsScreenMixin extends Screen {
     private void onRootAdded(Advancement root, CallbackInfo ci) {
         AdvancementCache.markDirty();
         if (this.selectedTab == null && !this.tabs.isEmpty()) {
-            AdvancementTab tab = this.tabs.get(root);
-            if (tab == null) {
-                tab = this.tabs.values().iterator().next();
+            AdvancementTab defaultTab = modernAdvancements$getDefaultTab();
+            this.selectedTab = defaultTab;
+            if (defaultTab != null) {
+                this.advancements.setSelectedTab(defaultTab.getAdvancement(), true);
             }
-            this.selectedTab = tab;
-            this.advancements.setSelectedTab(tab.getAdvancement(), true);
         }
     }
 
@@ -319,8 +331,7 @@ public abstract class AdvancementsScreenMixin extends Screen {
     @Inject(method = "onSelectedTabChanged", at = @At("RETURN"))
     private void onTabChanged(@Nullable Advancement advancement, CallbackInfo ci) {
         if (this.selectedTab == null && !this.tabs.isEmpty()) {
-            AdvancementTab firstTab = this.tabs.values().iterator().next();
-            this.selectedTab = firstTab;
+            this.selectedTab = modernAdvancements$getDefaultTab();
         }
     }
 
